@@ -1,17 +1,16 @@
-#include <allegro5\allegro.h>
-#include <allegro5\allegro_image.h>
+#include "sprites.h"
 #include <allegro5\allegro_primitives.h>
 #include <allegro5\allegro_font.h>
 #include <allegro5\allegro_ttf.h>
 #include <allegro5\allegro_native_dialog.h>
-#include <iostream>
+
 
 const int WIDTH = 800;
 const int HEIGHT = 640;
 
 bool keys[] = {false, false, false, false};
 enum KEYS{UP, DOWN, LEFT, RIGHT};
-
+enum CHARACTERS{QBERT, SNAKE, BALL, DISK, ISO};
 int main()
 {	//==============================================
 	// PROJECT VARIABLES
@@ -19,22 +18,27 @@ int main()
 	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
+	const unsigned sprintHeightInBitmap[] = {0, 50, 115, 150, 178};
 
+	const unsigned qbertY = 50;
+	const unsigned qbertX = 37;
+	const unsigned qbertFrames = 4;
 	
-	int qbertY = 50;
-	int qbertX = 37;
+	const unsigned snakeY = 65;
+	const unsigned snakeX = 41;
+	const unsigned snakeFrames = 3;
 	
-	int snakeY = 65;
-	int snakeX = 41;
-	
-	int ballY = 35;
-	int ballX = 38;
+	const unsigned ballY = 35;
+	const unsigned ballX = 38;
+	const unsigned ballFrames = 3;
 
-	int diskY = 28;
-	int diskX = 37;
+	const unsigned diskY = 28;
+	const unsigned diskX = 37;
+	const unsigned diskFrames = 4;
 
-	int iso_cY = 41;
-	int iso_cX = 38;
+	const unsigned iso_cY = 41;
+	const unsigned iso_cX = 38;
+	const unsigned isoFrames = 2;
 
 	int mapSize = 80;
 	int mapColumns = 10;
@@ -85,6 +89,10 @@ int main()
 	
 	bitmap = al_load_bitmap("sprites.jpg");
 	
+	Sprites qbert(bitmap, 
+		sprintHeightInBitmap[QBERT], qbertX, qbertY,
+		10, 10,
+		qbertFrames, 5);
 
 	//==============================================
 	// TIMER INIT AND STARTUP
@@ -160,11 +168,8 @@ int main()
 		//==============================================
 		if(render && al_is_event_queue_empty(event_queue))
 		{
-			int height = 0 + qbertY + snakeY;
-			int i = 0;
-
-			al_draw_bitmap_region(bitmap,i*ballX,height,ballX,ballY,0,0,0);
-			
+			int i = 2;
+			qbert.Draw();
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}	
