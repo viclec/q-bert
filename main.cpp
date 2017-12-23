@@ -19,13 +19,22 @@ int main()
 	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
-	const int arraySize = 4;
 
-	int qbertX = 36;
-	int qbertY = 48;
+	
+	int qbertY = 50;
+	int qbertX = 37;
+	
+	int snakeY = 65;
+	int snakeX = 41;
+	
+	int ballY = 35;
+	int ballX = 38;
 
-	int tileSizeX = 36;
-	int tileSizeY = 48;
+	int diskY = 28;
+	int diskX = 37;
+
+	int iso_cY = 41;
+	int iso_cX = 38;
 
 	int mapSize = 80;
 	int mapColumns = 10;
@@ -74,7 +83,7 @@ int main()
 	// PROJECT INIT
 	//==============================================
 	
-	bitmap = al_load_bitmap("sheet.png");
+	bitmap = al_load_bitmap("sprites.jpg");
 	
 
 	//==============================================
@@ -151,6 +160,10 @@ int main()
 		//==============================================
 		if(render && al_is_event_queue_empty(event_queue))
 		{
+			int height = 0 + qbertY + snakeY;
+			int i = 0;
+
+			al_draw_bitmap_region(bitmap,i*ballX,height,ballX,ballY,0,0,0);
 			
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
