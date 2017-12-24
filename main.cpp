@@ -11,6 +11,7 @@ const int HEIGHT = 640;
 bool keys[] = {false, false, false, false};
 enum KEYS{UP, DOWN, LEFT, RIGHT};
 enum CHARACTERS{QBERT, SNAKE, BALL, DISK, ISO};
+
 int main()
 {	//==============================================
 	// PROJECT VARIABLES
@@ -18,7 +19,7 @@ int main()
 	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
-	const unsigned sprintHeightInBitmap[] = {0, 50, 115, 150, 178};
+	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178};
 
 	const unsigned qbertY = 50;
 	const unsigned qbertX = 37;
@@ -88,11 +89,19 @@ int main()
 	//==============================================
 	
 	bitmap = al_load_bitmap("sprites.jpg");
-	
+
 	Sprites qbert(bitmap, 
-		sprintHeightInBitmap[QBERT], qbertX, qbertY,
+		spriteHeightInBitmap[QBERT], qbertX, qbertY,
 		10, 10,
-		qbertFrames, 5);
+		qbertFrames, 5,
+		3, 10, 1, 0, 
+		1, 200, 100);
+
+	Sprites ball(bitmap, spriteHeightInBitmap[BALL], ballX, ballY,
+		10, 10, 
+		ballFrames, 7, 
+		3, 3, 1, 0,
+		1, 250, 150);
 
 	//==============================================
 	// TIMER INIT AND STARTUP
@@ -121,15 +130,19 @@ int main()
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
+				qbert.moveLeft();
 				keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
+				qbert.moveRight();
 				keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
+				qbert.moveUp();
 				keys[UP] = true;
 				break;
 			case ALLEGRO_KEY_DOWN:
+				qbert.moveDown();
 				keys[DOWN] = true;
 				break;
 			}
@@ -161,6 +174,7 @@ int main()
 		else if(ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			render = true;
+
 		}
 
 		//==============================================
@@ -168,8 +182,13 @@ int main()
 		//==============================================
 		if(render && al_is_event_queue_empty(event_queue))
 		{
-			int i = 2;
+			render = false;
+
+			ball.Draw();
+			ball.animationUpdate();
 			qbert.Draw();
+			qbert.animationUpdate();
+
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}	
@@ -185,4 +204,3 @@ int main()
 
 	return 0;
 }
-
