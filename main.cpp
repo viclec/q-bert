@@ -16,11 +16,11 @@ double qbertY = 48;
 double tileSizeX = 38;
 double tileSizeY = 48;
 
-double cubeX=0;
+double cubeX=6;
 double cubeY=180;
 
-double cubeSizeX = 38;
-double cubeSizeY = 41;
+double cubeSizeX = 32;
+double cubeSizeY = 38;
 
 bool keys[] = {false, false, false, false};
 enum KEYS{UP, DOWN, LEFT, RIGHT};
