@@ -8,9 +8,49 @@
 const int WIDTH = 800;
 const int HEIGHT = 640;
 
+ALLEGRO_BITMAP* bitmap = NULL;
+
+double qbertX = 36;
+double qbertY = 48;
+
+double tileSizeX = 38;
+double tileSizeY = 48;
+
+double cubeX=0;
+double cubeY=180;
+
+double cubeSizeX = 38;
+double cubeSizeY = 41;
+
 bool keys[] = {false, false, false, false};
 enum KEYS{UP, DOWN, LEFT, RIGHT};
 enum CHARACTERS{QBERT, SNAKE, BALL, DISK, ISO};
+
+int h1 = 7;
+int h3 = 26;
+
+double iso_cube_y (double row){
+	return WIDTH/4 + (row-1)*h3;
+}
+
+void Compute_iso_cube_placement(double row,double col){
+	double i;
+	double j;
+
+	for(i=0; i<row; i++){
+
+		double y = iso_cube_y(i);
+		double ys = y;
+		double xs = HEIGHT/2 - i/2*cubeSizeX;
+
+		for(j=0; j<=i; j++){
+			double x = xs + (j-1)*cubeSizeX;
+			double xc = x + cubeSizeX/2;
+			double yc = y + h1;
+			al_draw_bitmap_region(bitmap, cubeX , cubeY, cubeSizeX, cubeSizeY,xc, yc , 0);
+		}
+	}	
+}
 
 int main()
 {	//==============================================
@@ -61,7 +101,6 @@ int main()
 	ALLEGRO_DISPLAY* display = NULL;
 	ALLEGRO_EVENT_QUEUE* event_queue = NULL;
 	ALLEGRO_TIMER* timer;
-	ALLEGRO_BITMAP* bitmap = NULL;
 	
 	//==============================================
 	// ALLEGRO INIT FUNCTIONS
@@ -186,7 +225,7 @@ int main()
 		if(render && al_is_event_queue_empty(event_queue))
 		{
 			render = false;
-
+			Compute_iso_cube_placement(12,3);
 			ball.Draw();
 			ball.animationUpdate();
 			qbert.Draw();
