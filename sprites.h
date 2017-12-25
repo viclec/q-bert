@@ -82,30 +82,54 @@ public:
 	{
 		al_draw_bitmap_region(image, currFrame*spriteWidth, index, spriteWidth, spriteHeight ,positionX, positionY, 0);
 	}
-	
-	void moveRight()
+
+	void moveUpRight()
 	{
-		positionX += (5 * velocityX);
+		moveUp(26);
+		moveRight(16);
+	}
+
+	void moveUpLeft()
+	{
+		moveUp(26);
+		moveLeft(16);
+	}
+
+	void moveDownRight()
+	{
+		moveDown(26);
+		moveRight(16);
+	}
+
+	void moveDownLeft()
+	{
+		moveDown(26);
+		moveLeft(16);
+	}
+	
+	void moveRight(int interval)
+	{
+		positionX += (interval * velocityX);
 		if(positionX > 600){
 			positionX = 600;
 		}
 
 	}
-	void moveLeft()
+	void moveLeft(int interval)
 	{
-		positionX -= (5 * velocityX);
+		positionX -= (interval * velocityX);
 		if(positionX < 0)
 			positionX = 0;
 	}
-	void moveUp()
+	void moveUp(int interval)
 	{
-		positionY -= (5 * velocityX);
+		positionY -= (interval * velocityX);
 		if(positionY < 0)
 			positionY = 0;
 	}
-	void moveDown()
+	void moveDown(int interval)
 	{
-		positionY += (5 * velocityX);
+		positionY += (interval * velocityX);
 		if(positionY > 600)
 			positionY = 600;
 	}

@@ -136,8 +136,8 @@ int main()
 		spriteHeightInBitmap[QBERT], qbertX, qbertY,
 		10, 10,
 		qbertFrames, 5,
-		3, 10, 1, 0, 
-		1, 200, 100);
+		1, 10, 1, 0, 
+		1, 303, 145);
 
 	Sprites ball(bitmap, spriteHeightInBitmap[BALL], ballX, ballY,
 		10, 10, 
@@ -172,19 +172,19 @@ int main()
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
-				qbert.moveLeft();
+				qbert.moveUpLeft();
 				keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
-				qbert.moveRight();
+				qbert.moveDownRight();
 				keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
-				qbert.moveUp();
+				qbert.moveUpRight();
 				keys[UP] = true;
 				break;
 			case ALLEGRO_KEY_DOWN:
-				qbert.moveDown();
+				qbert.moveDownLeft();
 				keys[DOWN] = true;
 				break;
 			}
