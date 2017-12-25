@@ -88,7 +88,10 @@ int main()
 	// PROJECT INIT
 	//==============================================
 	
-	bitmap = al_load_bitmap("sprites.jpg");
+	bitmap = al_load_bitmap("sprites.png");
+
+		al_convert_mask_to_alpha(bitmap,al_map_rgb(0,255,255));
+
 
 	Sprites qbert(bitmap, 
 		spriteHeightInBitmap[QBERT], qbertX, qbertY,
