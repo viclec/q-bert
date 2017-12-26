@@ -180,11 +180,12 @@ int main()
 	Sprites qbert(bitmap, 
 		spriteHeightInBitmap[QBERT], qbertX, qbertY,
 		10, 10,
-		qbertFrames, 7,
+		qbertFrames, 5,
 		1, 10, 1, 0, 
 		1, 304, 145);
 
-	Sprites ball(bitmap, spriteHeightInBitmap[BALL], ballX, ballY,
+	Sprites ball(bitmap, 
+		spriteHeightInBitmap[BALL], ballX, ballY,
 		10, 10, 
 		ballFrames, 20, 
 		10, 3, 1, 0,
