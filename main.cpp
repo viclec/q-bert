@@ -72,6 +72,9 @@ void pyramid_colision(Sprites qbert, std::vector<pyramid> &p)
 	}
 	if(position >= 0)
 	{
+		
+		if(diff > 40)
+			std::cout <<"\nexases";
 		p[position].multiplier = 7;
 	}
 //	assert(position >= 0);
@@ -100,7 +103,6 @@ void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyr
 				p.multiplier = 1;
 				pyramid.push_back(p);
 			}
-
 			al_draw_bitmap_region(bitmap, pyramid[index].multiplier * cubeX , cubeY, cubeSizeX, cubeSizeY,xc, yc , 0);	
 			index++;
 		}
@@ -139,20 +141,6 @@ int main()
 	const unsigned iso_cY = 41;
 	const unsigned iso_cX = 38;
 	const unsigned isoFrames = 2;
-
-	int mapSize = 80;
-	int mapColumns = 10;
-	int map[] = 
-	{		
-		0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,
-		0,0,0,0,0,0,0,0,0,0,
-		1,1,1,1,1,1,1,1,1,1
-	};
 
 	//==============================================
 	// ALLEGRO VARIABLES
@@ -292,7 +280,7 @@ int main()
 		{
 			render = false;
 			
-			Compute_iso_cube_placement(12,3, pyramid_boxes, first_run);
+			Compute_iso_cube_placement(7,3, pyramid_boxes, first_run);
 			
 			ball.Draw();
 			ball.animationUpdate();
