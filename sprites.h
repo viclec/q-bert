@@ -201,6 +201,7 @@ public:
 	unsigned getPositionY(){ return positionY; }
 	unsigned getFrameWidth(){ return frameWidth; }
 	unsigned getFrameHeight(){ return frameHeight; }
+	bool getAnimationStatus(){ return animate; }
 	void toString()
 	{
 		std::cout << "\n\n index:" << index << "\n width: " << spriteWidth << "\n height: " << spriteHeight <<

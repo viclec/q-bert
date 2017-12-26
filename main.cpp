@@ -208,8 +208,11 @@ int main()
 		//==============================================
 		// INPUT
 		//==============================================
+		
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
+			if(qbert.getAnimationStatus())
+				continue;
 			switch(ev.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
@@ -286,10 +289,10 @@ int main()
 			ball.animationUpdate();
 			qbert.Draw();
 			for(int i=0; i<4; i++){
-				if(keys[i] == true){
+				//if(keys[i] == true){
 					qbert.playerAnimationUpdate(i);
-					break;
-				}
+					//break;
+				//}
 			}
 			
 			al_flip_display();
