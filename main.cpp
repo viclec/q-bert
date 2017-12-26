@@ -182,14 +182,14 @@ int main()
 	Sprites qbert(bitmap, 
 		spriteHeightInBitmap[QBERT], qbertX, qbertY,
 		10, 10,
-		qbertFrames, 5,
+		qbertFrames, 7,
 		1, 10, 1, 0, 
 		1, 304, 145);
 
 	Sprites ball(bitmap, spriteHeightInBitmap[BALL], ballX, ballY,
 		10, 10, 
-		ballFrames, 7, 
-		3, 3, 1, 0,
+		ballFrames, 20, 
+		10, 3, 1, 0,
 		1, 250, 150);
 
 	//==============================================
@@ -232,6 +232,8 @@ int main()
 				break;
 			case ALLEGRO_KEY_DOWN:
 				qbert.moveDownLeft();
+				qbert.moveCurve();
+				
 				keys[DOWN] = true;
 				break;
 			}
@@ -269,7 +271,6 @@ int main()
 			{
 				pyramid_colision(qbert,pyramid_boxes);
 			}
-			
 
 		}
 
@@ -285,8 +286,7 @@ int main()
 			ball.Draw();
 			ball.animationUpdate();
 			qbert.Draw();
-			qbert.animationUpdate();
-			
+			qbert.playerAnimationUpdate();
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}	

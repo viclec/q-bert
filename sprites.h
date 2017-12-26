@@ -40,6 +40,7 @@ protected:
 	unsigned positionY;
 
 	int animationDirection;
+	bool animate;
 public:
 	Sprites(
 		ALLEGRO_BITMAP* im, 
@@ -74,6 +75,7 @@ public:
 		positionY = posY;
 
 		animationDirection = animationDir;
+		animate = false;
 	}	
 	
 	
@@ -87,24 +89,28 @@ public:
 	{
 		moveUp(26);
 		moveRight(16);
+		animate = true;
 	}
 
 	void moveUpLeft()
 	{
 		moveUp(26);
 		moveLeft(16);
+		animate = true;
 	}
 
 	void moveDownRight()
 	{
 		moveDown(26);
 		moveRight(16);
+		animate = true;
 	}
 
 	void moveDownLeft()
 	{
-		moveDown(26);
-		moveLeft(16);
+		moveDown(66/2);
+		moveLeft(16/2);
+		animate = true;
 	}
 	
 	void moveRight(int interval)
@@ -133,6 +139,12 @@ public:
 		if(positionY > 600)
 			positionY = 600;
 	}
+	void moveCurve()
+	{
+		positionY -= 40;
+		if(positionY > 600)
+			positionY = 600;
+	}
 	void animationUpdate()
 	{
 			if(++frameCount >= frameDelay)
@@ -140,6 +152,7 @@ public:
 				currFrame += animationDirection;
 				if(currFrame >= maxFrame)
 				{
+					
 					currFrame = 0;
 				}
 				else if(currFrame <= 0)
@@ -148,13 +161,37 @@ public:
 				}
 				frameCount = 0;
 			}
-		
+	}
+	void playerAnimationUpdate()
+	{
+		if(animate){
+			if(++frameCount >= frameDelay)
+			{
+				currFrame += animationDirection;
+				if(currFrame >= maxFrame)
+				{
+					moveDownLeft();
+					currFrame = 0;
+				}
+				else if(currFrame <= 0)
+				{
+					currFrame = maxFrame - 1;
+				}
+				frameCount = 0;
+			}
+			if(frameCount == 0 && currFrame == 0){
+				animate = false;
+			}
+		}
 	}
 	unsigned getCurrFrame(){ return currFrame; }
 	unsigned getFrameCount(){ return frameCount; }
 	unsigned getMaxFrame(){ return maxFrame; }
 	unsigned getFrameDelay(){ return frameDelay; }
-
+	unsigned getPositionX(){ return positionX; }
+	unsigned getPositionY(){ return positionY; }
+	unsigned getFrameWidth(){ return frameWidth; }
+	unsigned getFrameHeight(){ return frameHeight; }
 	void toString()
 	{
 		std::cout << "\n\n index:" << index << "\n width: " << spriteWidth << "\n height: " << spriteHeight <<
