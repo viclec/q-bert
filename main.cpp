@@ -217,14 +217,17 @@ int main()
 				break;
 			case ALLEGRO_KEY_LEFT:
 				qbert.moveUpLeft();
+				qbert.moveCurve();
 				keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
 				qbert.moveDownRight();
+				qbert.moveCurve();
 				keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
 				qbert.moveUpRight();
+				qbert.moveCurve();
 				keys[UP] = true;
 				break;
 			case ALLEGRO_KEY_DOWN:
@@ -282,7 +285,13 @@ int main()
 			ball.Draw();
 			ball.animationUpdate();
 			qbert.Draw();
-			qbert.playerAnimationUpdate();
+			for(int i=0; i<4; i++){
+				if(keys[i] == true){
+					qbert.playerAnimationUpdate(i);
+					break;
+				}
+			}
+			
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}	

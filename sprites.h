@@ -87,22 +87,22 @@ public:
 
 	void moveUpRight()
 	{
-		moveUp(26);
-		moveRight(16);
+		moveUp(66/2);
+		moveRight(16/2);
 		animate = true;
 	}
 
 	void moveUpLeft()
 	{
-		moveUp(26);
-		moveLeft(16);
+		moveUp(66/2);
+		moveLeft(16/2);
 		animate = true;
 	}
 
 	void moveDownRight()
 	{
-		moveDown(26);
-		moveRight(16);
+		moveDown(66/2);
+		moveRight(16/2);
 		animate = true;
 	}
 
@@ -110,8 +110,6 @@ public:
 	{
 		moveDown(66/2);
 		moveLeft(16/2);
-		//moveDown(26);
-		//moveLeft(16);
 		animate = true;
 	}
 	
@@ -163,7 +161,7 @@ public:
 				frameCount = 0;
 			}
 	}
-	void playerAnimationUpdate()
+	void playerAnimationUpdate(unsigned i)
 	{
 		if(animate){
 			if(++frameCount >= frameDelay)
@@ -171,7 +169,17 @@ public:
 				currFrame += animationDirection;
 				if(currFrame >= maxFrame)
 				{
-					moveDownLeft();
+					if(i == 0)
+						moveUpRight();
+					else if(i == 1)
+						moveDownLeft();
+					else if(i == 2)
+						moveUpLeft();
+					else if(i == 3)
+						moveDownRight();
+					else
+						assert(0);
+
 					currFrame = 0;
 				}
 				else if(currFrame <= 0)
