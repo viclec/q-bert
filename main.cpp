@@ -114,6 +114,7 @@ int main()
 	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
+	unsigned key_pushed = 666;
 	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178};
 	
 	unsigned number_of_rows= 7;
@@ -221,22 +222,26 @@ int main()
 			case ALLEGRO_KEY_LEFT:
 				qbert.moveUpLeft();
 				qbert.moveCurve();
+				key_pushed = LEFT;
 				keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
 				qbert.moveDownRight();
 				qbert.moveCurve();
 				keys[RIGHT] = true;
+				key_pushed = RIGHT;
 				break;
 			case ALLEGRO_KEY_UP:
 				qbert.moveUpRight();
 				qbert.moveCurve();
 				keys[UP] = true;
+				key_pushed = UP;
 				break;
 			case ALLEGRO_KEY_DOWN:
 				qbert.moveDownLeft();
 				qbert.moveCurve();
 				keys[DOWN] = true;
+				key_pushed = DOWN;
 				break;
 			}
 		}
@@ -288,11 +293,8 @@ int main()
 			ball.Draw();
 			ball.animationUpdate();
 			qbert.Draw();
-			for(int i=0; i<4; i++){
-				//if(keys[i] == true){
-					qbert.playerAnimationUpdate(i);
-					//break;
-				//}
+			if(key_pushed != 666){
+				qbert.playerAnimationUpdate(key_pushed);
 			}
 			
 			al_flip_display();

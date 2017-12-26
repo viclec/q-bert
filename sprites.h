@@ -87,28 +87,32 @@ public:
 
 	void moveUpRight()
 	{
-		moveUp(66/2);
+		moveDown(40/2);
+		moveUp(26/2);
 		moveRight(16/2);
 		animate = true;
 	}
 
 	void moveUpLeft()
 	{
-		moveUp(66/2);
+		moveDown(40/2);
+		moveUp(26/2);
 		moveLeft(16/2);
 		animate = true;
 	}
 
 	void moveDownRight()
 	{
-		moveDown(66/2);
+		moveDown(40/2);
+		moveDown(26/2);
 		moveRight(16/2);
 		animate = true;
 	}
 
 	void moveDownLeft()
 	{
-		moveDown(66/2);
+		moveDown(40/2);
+		moveDown(26/2);
 		moveLeft(16/2);
 		animate = true;
 	}
