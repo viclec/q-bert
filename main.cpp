@@ -48,35 +48,23 @@ void pyramid_colision(Sprites qbert, std::vector<pyramid> &p)
 	//########################
 	unsigned counter = 0;
 	unsigned q_x = qbert.getPositionX();
-	unsigned q_y = qbert.getPositionY();
-	unsigned q_bx = qbert.getFrameWidth();			
-	unsigned q_by = qbert.getFrameHeight();
-	int diff = HEIGHT;
-	int position = -1;
+	unsigned q_y = qbert.getPositionY() + 36;
+	
+	bool flag = true;
 	
 	while(counter < p.size())
 	{
-		if(p[counter].x == q_x)
+		if(q_x == p[counter].x && q_y == p[counter].y)
 		{
-			if(p[counter].y - q_y  <= 0){
-				counter++;
-				continue;
-			}
-			if(p[counter].y - q_y <= diff)
-			{
-				diff = (int)std::abs((int)(q_y - p[counter].y));
-				position = counter;
-			}
+			flag = false;
+			p[counter].multiplier = 7;
+			break;
 		}
 		counter++;
 	}
-	if(position >= 0)
-	{
-		
-		if(diff > 40)
-			std::cout <<"\nexases";
-		p[position].multiplier = 7;
-	}
+	if(flag == true)
+		std::cout << "\ nout of bounds \n";
+	
 //	assert(position >= 0);
 }
 
@@ -232,7 +220,7 @@ int main()
 				break;
 			case ALLEGRO_KEY_DOWN:
 				qbert.moveDownLeft();
-				qbert.moveCurve();
+				//qbert.moveCurve();
 				
 				keys[DOWN] = true;
 				break;
