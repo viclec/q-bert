@@ -108,10 +108,10 @@ public:
 
 	void moveDownLeft()
 	{
-		//moveDown(66/2);
-		//moveLeft(16/2);
-		moveDown(26);
-		moveLeft(16);
+		moveDown(66/2);
+		moveLeft(16/2);
+		//moveDown(26);
+		//moveLeft(16);
 		animate = true;
 	}
 	
@@ -171,7 +171,7 @@ public:
 				currFrame += animationDirection;
 				if(currFrame >= maxFrame)
 				{
-					//moveDownLeft();
+					moveDownLeft();
 					currFrame = 0;
 				}
 				else if(currFrame <= 0)

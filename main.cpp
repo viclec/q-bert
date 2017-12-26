@@ -41,7 +41,7 @@ double iso_cube_y (double row){
 	return WIDTH/4 + (row-1)*h3;
 }
 
-void pyramid_colision(Sprites qbert, std::vector<pyramid> &p)
+void pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
 {	
 	//########################
 	// bound width, height
@@ -56,19 +56,25 @@ void pyramid_colision(Sprites qbert, std::vector<pyramid> &p)
 	{
 		if(q_x == p[counter].x && q_y == p[counter].y)
 		{
+			if(p[counter].multiplier == 1)
+				blocksLeft--;
 			flag = false;
 			p[counter].multiplier = 7;
 			break;
 		}
 		counter++;
 	}
+
+	if(blocksLeft == 0){
+		//std::cout << "kerdises wow\n";
+		done = true;
+	}
 	if(flag == true)
-		std::cout << "\ nout of bounds \n";
-	
-//	assert(position >= 0);
+	{
+		//std::cout << "\n out of bounds \n";	
+	}
 }
 
-//otan pathsw sto cube pollaplasiazw to cubeX me 6.6 gia na alla3w xrwma
 void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyramid, bool &first_run){
 	double i;
 	double j;
@@ -109,6 +115,9 @@ int main()
 	bool render = false;
 	const float FPS = 60.0;
 	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178};
+	
+	unsigned number_of_rows= 7;
+	unsigned blocksLeft = (number_of_rows * (number_of_rows + 1) ) / 2;
 
 	const unsigned qbertY = 50;
 	const unsigned qbertX = 37;
@@ -220,8 +229,7 @@ int main()
 				break;
 			case ALLEGRO_KEY_DOWN:
 				qbert.moveDownLeft();
-				//qbert.moveCurve();
-				
+				qbert.moveCurve();
 				keys[DOWN] = true;
 				break;
 			}
@@ -257,7 +265,7 @@ int main()
 			unsigned qy = qbert.getPositionY();
 			if(!first_run)
 			{
-				pyramid_colision(qbert,pyramid_boxes);
+				pyramid_colision(qbert,blocksLeft,done,pyramid_boxes);
 			}
 
 		}
@@ -269,7 +277,7 @@ int main()
 		{
 			render = false;
 			
-			Compute_iso_cube_placement(7,3, pyramid_boxes, first_run);
+			Compute_iso_cube_placement(number_of_rows,3, pyramid_boxes, first_run);
 			
 			ball.Draw();
 			ball.animationUpdate();
@@ -279,7 +287,6 @@ int main()
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}	
 	}
-
 	//==============================================
 	// DESTROY ALLEGRO OBJECTS
 	//==============================================
