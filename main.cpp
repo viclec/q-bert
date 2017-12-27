@@ -9,8 +9,12 @@
 const int WIDTH = 800;
 const int HEIGHT = 640;
 
+
+
 ALLEGRO_BITMAP* bitmap = NULL;
 
+int qbertfall=0;
+int gototorightdisk=0;
 double qbertX = 36;
 double qbertY = 48;
 
@@ -22,6 +26,9 @@ double cubeY=180;
 
 double cubeSizeX = 32;
 double cubeSizeY = 38;
+
+double diskX = 5;
+double diskY = 150;
 
 struct pyramid{
 	unsigned x;
@@ -41,7 +48,7 @@ double iso_cube_y (double row){
 	return WIDTH/4 + (row-1)*h3;
 }
 
-void pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
+bool pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
 {	
 	//########################
 	// bound width, height
@@ -53,7 +60,7 @@ void pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vect
 	bool flag = true;
 	
 	while(counter < p.size())
-	{
+	{	
 		if(q_x == p[counter].x && q_y == p[counter].y)
 		{
 			if(p[counter].multiplier == 1)
@@ -69,10 +76,20 @@ void pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vect
 		//std::cout << "kerdises wow\n";
 		done = true;
 	}
-	if(flag == true)
-	{
-		//std::cout << "\n out of bounds \n";	
+	if( qbert.getAnimationStatus() == false && flag == true)
+	{	
+		if(q_y != 259){
+		 qbertfall=1;
+		  
+		}else if(q_y == 259){
+		 qbertfall==0; 
+		 gototorightdisk=1; 
+		}
+		
+		
+		
 	}
+	 return false;	
 }
 
 void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyramid, bool &first_run){
@@ -85,7 +102,7 @@ void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyr
 		double y = iso_cube_y(i);
 		double ys = y;
 		double xs = HEIGHT/2 - i/2*cubeSizeX;
-
+		
 		for(j=0; j<=i; j++){
 			double x = xs + (j-1)*cubeSizeX;
 			double xc = x + cubeSizeX/2;
@@ -97,7 +114,10 @@ void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyr
 				p.multiplier = 1;
 				pyramid.push_back(p);
 			}
-			al_draw_bitmap_region(bitmap, pyramid[index].multiplier * cubeX , cubeY, cubeSizeX, cubeSizeY,xc, yc , 0);	
+			al_draw_bitmap_region(bitmap, pyramid[index].multiplier * cubeX , cubeY, cubeSizeX, cubeSizeY, xc, yc , 0);	
+		//	if(i==2){std::cout<<yc;}
+
+
 			index++;
 		}
 	}	
@@ -132,8 +152,8 @@ int main()
 	const unsigned ballX = 38;
 	const unsigned ballFrames = 3;
 
-	const unsigned diskY = 28;
-	const unsigned diskX = 37;
+	//const unsigned diskY = 28;
+	//const unsigned diskX = 37;
 	const unsigned diskFrames = 4;
 
 	const unsigned iso_cY = 41;
@@ -189,6 +209,21 @@ int main()
 		ballFrames, 20, 
 		10, 3, 1, 0,
 		1, 250, 150);
+
+
+	Sprites diskright(bitmap
+		,spriteHeightInBitmap[DISK],37,30
+		,0,0
+		,4,20
+		,38,0,1,0
+		,1,382,259);
+
+	Sprites diskleft(bitmap
+		,spriteHeightInBitmap[DISK],37,30
+		,0,0
+		,4,20
+		,38,0,1,0
+		,1,219,259);
 
 	//==============================================
 	// TIMER INIT AND STARTUP
@@ -277,6 +312,14 @@ int main()
 			if(!first_run)
 			{
 				pyramid_colision(qbert,blocksLeft,done,pyramid_boxes);
+				if(qbertfall==1){
+					qbert.set_Fall(true);
+				}
+				
+				if(gototorightdisk==1){
+
+					qbert.gotodisk();
+				}
 			}
 
 		}
@@ -292,6 +335,13 @@ int main()
 			
 			ball.Draw();
 			ball.animationUpdate();
+
+			diskright.Draw();
+			diskright.animationUpdate();
+
+			diskleft.Draw();
+			diskleft.animationUpdate();
+
 			qbert.Draw();
 			if(key_pushed != 666){
 				qbert.playerAnimationUpdate(key_pushed);

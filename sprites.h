@@ -3,10 +3,12 @@
 #include <allegro5\allegro.h>
 #include <allegro5\allegro_image.h>
 
+
+
 class Sprites{
 protected:
 	ALLEGRO_BITMAP* image;
-
+	
 	//########################################
 	// index se poio upsos sto bitmap vrisketai to sprite
 	//########################################
@@ -15,7 +17,6 @@ protected:
 	unsigned spriteHeight;
 	unsigned frameWidth;
 	unsigned frameHeight;
-	
 	
 	//########################################
 	// maxFrame ola ta frames tou animation, currFrame curr animation frame
@@ -38,10 +39,13 @@ protected:
 	int directionY;
 	unsigned positionX;
 	unsigned positionY;
-
+	
 	int animationDirection;
 	bool animate;
+	bool move_to_right_disk;
+	bool falling_out_of_bounds;
 public:
+	
 	Sprites(
 		ALLEGRO_BITMAP* im, 
 		unsigned ind, unsigned sWidth, unsigned sHeight,
@@ -55,6 +59,8 @@ public:
 		assert(sWidth != 0);
 		assert(sHeight != 0);
 
+		
+	
 		image = im;
 		index = ind;
 		spriteWidth = sWidth;
@@ -73,13 +79,27 @@ public:
 		directionY = dirY;
 		positionX = posX;
 		positionY = posY;
-
+		falling_out_of_bounds=false;
+		move_to_right_disk=false;
 		animationDirection = animationDir;
 		animate = false;
 	}	
 	
-	
+	void setpositionX(unsigned i){
+		positionX=i;
+	}
 
+	void setpositionY(unsigned i){
+		positionY=i;
+	}
+
+	void set_Fall(bool arg ){
+		falling_out_of_bounds=arg;
+	}
+
+	void gotodisk(){
+		move_to_right_disk=true;
+	}
 	void Draw()
 	{
 		al_draw_bitmap_region(image, currFrame*spriteWidth, index, spriteWidth, spriteHeight ,positionX, positionY, 0);
@@ -166,14 +186,25 @@ public:
 			}
 	}
 	void playerAnimationUpdate(unsigned i)
-	{
-		if(animate){
+	{	
+		
+		if(falling_out_of_bounds==true){
+			moveDown(15);
+		}
+		
+		else if(animate){
+			
 			if(++frameCount >= frameDelay)
 			{
 				currFrame += animationDirection;
+
+				 
+					
+					
 				if(currFrame >= maxFrame)
-				{
-					if(i == 0)
+				{   
+					  
+				    if(i == 0)
 						moveUpRight();
 					else if(i == 1)
 						moveDownLeft();
@@ -181,10 +212,12 @@ public:
 						moveUpLeft();
 					else if(i == 3)
 						moveDownRight();
-					else
+					else 
 						assert(0);
-
+					 
 					currFrame = 0;
+
+					
 				}
 				else if(currFrame <= 0)
 				{
@@ -205,6 +238,7 @@ public:
 	unsigned getPositionY(){ return positionY; }
 	unsigned getFrameWidth(){ return frameWidth; }
 	unsigned getFrameHeight(){ return frameHeight; }
+	bool getFallingStatus(){return falling_out_of_bounds;}
 	bool getAnimationStatus(){ return animate; }
 	void toString()
 	{
