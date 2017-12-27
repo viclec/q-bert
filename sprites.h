@@ -44,6 +44,8 @@ protected:
 	bool animate;
 	bool move_to_right_disk;
 	bool falling_out_of_bounds;
+	bool enemyMove;
+	int lives;
 public:
 	
 	Sprites(
@@ -83,6 +85,8 @@ public:
 		move_to_right_disk=false;
 		animationDirection = animationDir;
 		animate = false;
+		enemyMove = true;
+		lives = 3;
 	}	
 	
 	void setpositionX(unsigned i){
@@ -160,8 +164,11 @@ public:
 	void moveDown(int interval)
 	{
 		positionY += (interval * velocityX);
-		if(positionY > 600)
-			positionY = 600;
+		if(positionY > 600){
+			positionY = 145;
+			positionX = 304;
+			falling_out_of_bounds = 1;
+		}
 	}
 	void moveCurve()
 	{
@@ -169,6 +176,7 @@ public:
 		if(positionY > 600)
 			positionY = 600;
 	}
+
 	void animationUpdate()
 	{
 			if(++frameCount >= frameDelay)
@@ -185,6 +193,44 @@ public:
 				frameCount = 0;
 			}
 	}
+
+	void animationMove()
+	{
+
+		if(++frameCount >= frameDelay)
+			{
+				currFrame += animationDirection;
+					if(enemyMove)
+					{	
+						if(currFrame == 1)
+						{
+							moveUp(20);
+						}else if(currFrame == 2)
+						{
+							moveDown(20);
+							moveDown(26);
+							if(rand()%2 == 0){
+								moveLeft(16);
+							}else{
+								moveRight(16);
+							}
+						}
+					}
+					enemyMove = !enemyMove;
+				if(currFrame >= maxFrame)
+				{
+					currFrame = 0;
+					
+				
+				}
+				else if(currFrame <= 0)
+				{
+					currFrame = maxFrame - 1;
+				}
+				frameCount = 0;
+			}
+	}
+
 	void playerAnimationUpdate(unsigned i)
 	{	
 		
@@ -217,7 +263,6 @@ public:
 					 
 					currFrame = 0;
 
-					
 				}
 				else if(currFrame <= 0)
 				{
@@ -229,6 +274,18 @@ public:
 				animate = false;
 			}
 		}
+	}
+	bool qbertcollision(Sprites enemy)
+	{
+		if( positionX + frameWidth > enemy.positionX - enemy.frameWidth &&
+			positionX - frameWidth < enemy.positionX + enemy.frameWidth &&
+			positionY + frameHeight > enemy.positionY - enemy.frameHeight &&
+			positionY - frameHeight < enemy.positionY + enemy.frameHeight)
+		{
+			std::cout << "collision\n";
+			return true;
+		}
+		return false;
 	}
 	unsigned getCurrFrame(){ return currFrame; }
 	unsigned getFrameCount(){ return frameCount; }

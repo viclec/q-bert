@@ -13,8 +13,8 @@ const int HEIGHT = 640;
 
 ALLEGRO_BITMAP* bitmap = NULL;
 
-int qbertfall=0;
-int gototorightdisk=0;
+int qbertfall = 0;
+int gototorightdisk = 0;
 double qbertX = 36;
 double qbertY = 48;
 
@@ -48,7 +48,7 @@ double iso_cube_y (double row){
 	return WIDTH/4 + (row-1)*h3;
 }
 
-bool pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
+bool pyramid_colision(Sprites qbert, Sprites diskLeft, Sprites diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
 {	
 	//########################
 	// bound width, height
@@ -78,12 +78,24 @@ bool pyramid_colision(Sprites qbert, unsigned &blocksLeft, bool &done, std::vect
 	}
 	if( qbert.getAnimationStatus() == false && flag == true)
 	{	
-		if(q_y != 259){
-		 qbertfall=1;
-		  
-		}else if(q_y == 259){
-		 qbertfall==0; 
-		 gototorightdisk=1; 
+		if(q_y != 259)
+		{
+			qbertfall=1;  
+		}
+		else if(q_y == 259)
+		{
+			qbertfall==0; 
+			gototorightdisk=1; 
+			
+			if(q_x == diskRight.getPositionX())
+			{
+
+			}
+			else if(q_x == diskLeft.getPositionX())
+			{
+
+			}
+
 		}
 		
 		
@@ -199,32 +211,31 @@ int main()
 
 	Sprites qbert(bitmap, 
 		spriteHeightInBitmap[QBERT], qbertX, qbertY,
-		10, 10,
+		8, 8,
 		qbertFrames, 5,
 		1, 10, 1, 0, 
 		1, 304, 145);
 
 	Sprites ball(bitmap, 
 		spriteHeightInBitmap[BALL], ballX, ballY,
-		10, 10, 
-		ballFrames, 20, 
-		10, 3, 1, 0,
-		1, 250, 150);
-
+		8, 8,
+		ballFrames, 5, 
+		1, 10, 1, 0,
+		1, 304, 165);
 
 	Sprites diskright(bitmap
 		,spriteHeightInBitmap[DISK],37,30
 		,0,0
 		,4,20
 		,38,0,1,0
-		,1,382,259);
+		,1,384,259);
 
 	Sprites diskleft(bitmap
 		,spriteHeightInBitmap[DISK],37,30
 		,0,0
 		,4,20
 		,38,0,1,0
-		,1,219,259);
+		,1,224,259);
 
 	//==============================================
 	// TIMER INIT AND STARTUP
@@ -312,7 +323,7 @@ int main()
 			unsigned qy = qbert.getPositionY();
 			if(!first_run)
 			{
-				pyramid_colision(qbert,blocksLeft,done,pyramid_boxes);
+				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes);
 				if(qbertfall==1){
 					qbert.set_Fall(true);
 				}
@@ -322,7 +333,14 @@ int main()
 					qbert.gotodisk();
 				}
 			}
-
+			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
+			{
+				ball.animationMove();
+				qbert.qbertcollision(ball);
+			}
+	
+		diskright.animationUpdate();
+			diskleft.animationUpdate();
 		}
 
 		//==============================================
@@ -333,15 +351,14 @@ int main()
 			render = false;
 			
 			Compute_iso_cube_placement(number_of_rows,3, pyramid_boxes, first_run);
+			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
+			{
+				ball.Draw();
+			}			
 			
-			ball.Draw();
-			ball.animationUpdate();
-
 			diskright.Draw();
-			diskright.animationUpdate();
 
 			diskleft.Draw();
-			diskleft.animationUpdate();
 
 			qbert.Draw();
 			if(key_pushed != 666){
