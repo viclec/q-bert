@@ -221,7 +221,7 @@ public:
 					if(enemyMove)
 					{	
 						if(currFrame == 1)
-						{
+						{	
 							moveUp(20);
 						}else if(currFrame == 2)
 						{   
@@ -241,7 +241,7 @@ public:
 					}
 					enemyMove = !enemyMove;
 				if(currFrame >= maxFrame)
-				{
+				{	
 					currFrame = 0;
 					
 				
@@ -276,17 +276,25 @@ public:
 				if(currFrame >= maxFrame)
 				{   
 					  
-				    if(i == 0)
+				    if(i == 0){
+						index=432;
 						moveUpRight();
-					else if(i == 1)
+					}
+					else if(i == 1){
+						index=482;
 						moveDownLeft();
-					else if(i == 2)
+					}
+					else if(i == 2){
+						index=532;
 						moveUpLeft();
-					else if(i == 3)
+					}
+					else if(i == 3){
+						index=0;
 						moveDownRight();
-					else 
+					}
+					else {
 						assert(0);
-					 
+					}
 					currFrame = 0;
 
 				}
