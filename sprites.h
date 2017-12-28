@@ -72,6 +72,7 @@ public:
 	
 		currFrame = 0;
 		frameCount = 0;
+		
 		maxFrame = mFrame;
 		frameDelay = fDelay;
 
