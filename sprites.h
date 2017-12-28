@@ -104,6 +104,10 @@ public:
 	void gotodisk(){
 		move_to_right_disk=true;
 	}
+
+	void lose_live(){
+	 lives--;
+	}
 	void Draw()
 	{
 		al_draw_bitmap_region(image, currFrame*spriteWidth, index, spriteWidth, spriteHeight ,positionX, positionY, 0);
@@ -164,10 +168,21 @@ public:
 	void moveDown(int interval)
 	{
 		positionY += (interval * velocityX);
-		if(positionY > 600){
+		if(positionY > 355){
 			positionY = 145;
 			positionX = 304;
-			falling_out_of_bounds = 1;
+			lives--;
+			falling_out_of_bounds = false;
+		}
+	}
+
+	void moveDownBall(int interval)
+	{
+		positionY += (interval * velocityX);
+		if(positionY > 355){
+			positionY = 165;
+			positionX = 304;
+			lives=0;
 		}
 	}
 	void moveCurve()
@@ -196,9 +211,12 @@ public:
 
 	void animationMove()
 	{
-
+	   
+			
+		
 		if(++frameCount >= frameDelay)
-			{
+			{	
+
 				currFrame += animationDirection;
 					if(enemyMove)
 					{	
@@ -206,13 +224,18 @@ public:
 						{
 							moveUp(20);
 						}else if(currFrame == 2)
-						{
-							moveDown(20);
-							moveDown(26);
+						{   
+							moveDownBall(20);
+					
+					   	    moveDownBall(26);
+							if(lives!=0){
 							if(rand()%2 == 0){
-								moveLeft(16);
+									moveRight(16);
+								}else{
+									moveLeft(16);
+								}
 							}else{
-								moveRight(16);
+								lives=1;
 							}
 						}
 					}
@@ -229,13 +252,16 @@ public:
 				}
 				frameCount = 0;
 			}
+		
+	   
+	    
 	}
 
 	void playerAnimationUpdate(unsigned i)
 	{	
 		
 		if(falling_out_of_bounds==true){
-			moveDown(15);
+			moveDown(5);
 		}
 		
 		else if(animate){
@@ -297,6 +323,7 @@ public:
 	unsigned getFrameHeight(){ return frameHeight; }
 	bool getFallingStatus(){return falling_out_of_bounds;}
 	bool getAnimationStatus(){ return animate; }
+	unsigned getlives(){return lives;}
 	void toString()
 	{
 		std::cout << "\n\n index:" << index << "\n width: " << spriteWidth << "\n height: " << spriteHeight <<
