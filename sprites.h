@@ -17,7 +17,7 @@ protected:
 	unsigned spriteHeight;
 	unsigned frameWidth;
 	unsigned frameHeight;
-	
+	unsigned draw;
 	//########################################
 	// maxFrame ola ta frames tou animation, currFrame curr animation frame
 	//########################################
@@ -88,6 +88,7 @@ public:
 		animate = false;
 		enemyMove = true;
 		lives = 3;
+		draw=1;
 	}	
 	
 	void setpositionX(unsigned i){
@@ -105,7 +106,16 @@ public:
 	void gotodisk(){
 		move_to_right_disk=true;
 	}
+	void zerolives(){
+		lives=0;
+	}
+	void qbert_set_index(unsigned i){
+		index = i;
+	}
 
+	void setdraw(int i){
+		draw = i;
+	}
 	void lose_live(){
 	 lives--;
 	}
@@ -280,6 +290,12 @@ public:
 				    if(i == 0){
 						index=432;
 						moveUpRight();
+						std::cout<<"po:"<<positionY<<"\n";
+					/*	if(positionX == 384 && positionY == 223 ){
+							positionX =304;
+							positionY =145;
+							index=0;
+						}*/
 					}
 					else if(i == 1){
 						index=482;
@@ -288,10 +304,17 @@ public:
 					else if(i == 2){
 						index=532;
 						moveUpLeft();
+						std::cout<<"po:"<<positionY<<"\n";
+						/*if(positionX == 224 && positionY == 223 ){
+							positionX =304;
+							positionY =145;
+							index=0;
+						}*/
 					}
 					else if(i == 3){
 						index=0;
 						moveDownRight();
+						
 					}
 					else {
 						assert(0);
@@ -333,6 +356,7 @@ public:
 	bool getFallingStatus(){return falling_out_of_bounds;}
 	bool getAnimationStatus(){ return animate; }
 	unsigned getlives(){return lives;}
+	unsigned getdraw(){return draw;}
 	void toString()
 	{
 		std::cout << "\n\n index:" << index << "\n width: " << spriteWidth << "\n height: " << spriteHeight <<

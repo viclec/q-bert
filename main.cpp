@@ -12,7 +12,8 @@ const int HEIGHT = 640;
 ALLEGRO_BITMAP* bitmap = NULL;
 
 int qbertfall = 0;
-
+int rightdisklives = 1;
+int leftdisklives = 1;
 int gototorightdisk = 0;
 double qbertX = 36;
 double qbertY = 48;
@@ -47,7 +48,7 @@ double iso_cube_y (double row){
 	return WIDTH/4 + (row-1)*h3;
 }
 
-bool pyramid_colision(Sprites qbert, Sprites diskLeft, Sprites diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
+bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
 {	
 	//########################
 	// bound width, height
@@ -77,26 +78,45 @@ bool pyramid_colision(Sprites qbert, Sprites diskLeft, Sprites diskRight, unsign
 	}
 	if( qbert.getAnimationStatus() == false && flag == true)
 	{	
-		if(q_y != 259)
+		if(q_y != diskLeft.getPositionY())
 		{
 			qbertfall=1;
 		}
-		else if(q_y == 259)
-		{
-			qbertfall==0; 
+		else if(q_y == diskLeft.getPositionY() && q_x == diskLeft.getPositionX())
+		{	
+				
+				if(diskLeft.getlives()!=0){
+					qbert.setpositionX(304) ;
+					qbert.setpositionY(145) ;
+					diskLeft.zerolives();
+					diskLeft.setdraw(0);
+					qbertfall=0; 
+				}else{
+					qbertfall=1; 
+				}
+				
+
 			gototorightdisk=1; 
 			
-			if(q_x == diskRight.getPositionX())
-			{
-
-			}
-			else if(q_x == diskLeft.getPositionX())
-			{
-
-			}
-
 		}
-		
+		else if(q_y == diskRight.getPositionY() && q_x == diskRight.getPositionX())
+		{	
+
+			if(diskRight.getlives()!=0){
+					qbert.setpositionX(304) ;
+					qbert.setpositionY(145) ;
+					diskRight.zerolives();
+					diskRight.setdraw(0);
+					qbertfall=0; 
+				}else{
+					qbertfall=1; 
+				}
+
+
+
+			gototorightdisk=1; 
+			
+		}
 		
 		
 	}
@@ -335,10 +355,7 @@ int main()
 					qbertfall=0;
 				}
 				
-				if(gototorightdisk==1){
-
-					qbert.gotodisk();
-				}
+				
 			}
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
 			{   
@@ -396,10 +413,15 @@ int main()
 			{  
 				 egg.Draw();
 				 
-			}		
-			diskright.Draw();
+			}
+			if(diskright.getdraw()==1){
+				diskright.Draw();
+			}
+			if(diskleft.getdraw()==1){
+				diskleft.Draw();
+			}
 
-			diskleft.Draw();
+			
 
 			qbert.Draw();
 		  
