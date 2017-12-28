@@ -177,7 +177,7 @@ int main()
 	
 	const unsigned snakeY = 65;
 	const unsigned snakeX = 41;
-	const unsigned snakeFrames = 3;
+	const unsigned snakeFrames = 4;
 	
 	const unsigned ballY = 35;
 	const unsigned ballX = 38;
@@ -233,6 +233,13 @@ int main()
 		8, 8,
 		qbertFrames, 5,
 		1, 10, 1, 0, 
+		1, 304, 145);
+	
+	Sprites snake(bitmap,
+		spriteHeightInBitmap[SNAKE], snakeX, snakeY,
+		8, 8,
+		snakeFrames, 40,
+		1, 10, 1, 0,
 		1, 304, 145);
 
 	Sprites ball(bitmap, 
@@ -293,24 +300,28 @@ int main()
 				done = true;
 				break;
 			case ALLEGRO_KEY_LEFT:
+				qbert.setIndex(532);
 				qbert.moveUpLeft();
 				qbert.moveCurve();
 				key_pushed = LEFT;
 				keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
+				qbert.setIndex(0);
 				qbert.moveDownRight();
 				qbert.moveCurve();
 				keys[RIGHT] = true;
 				key_pushed = RIGHT;
 				break;
 			case ALLEGRO_KEY_UP:
+				qbert.setIndex(432);
 				qbert.moveUpRight();
 				qbert.moveCurve();
 				keys[UP] = true;
 				key_pushed = UP;
 				break;
 			case ALLEGRO_KEY_DOWN:
+				qbert.setIndex(482);
 				qbert.moveDownLeft();
 				qbert.moveCurve();
 				keys[DOWN] = true;
@@ -359,17 +370,28 @@ int main()
 			}
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
 			{   
-				  ball.animationMove();
-				 
-				qbert.qbertcollision(ball);
+				ball.animationMove();
 			}
 			
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
 			{  
-				  egg.animationMove();
-				
+				if(egg.getPositionY() < 311)
+				{
+					egg.animationMove();
+					qbert.qbertcollision(egg);
+					//snake.setpositionX(egg.getPositionX());
+					//snake.setpositionY(egg.getPositionY());
+				}
+				else
+				{
+					snake.animationSnake(qbert);
+					qbert.qbertcollision(snake);
+				}
 			}
 
+			qbert.qbertcollision(ball);
+			
+			
 		    diskright.animationUpdate();
 			diskleft.animationUpdate();
 			
@@ -382,28 +404,10 @@ int main()
 		if(render && al_is_event_queue_empty(event_queue))
 		{
 			render = false;
-		  if(qbert.getFallingStatus()==1){
+
 			qbert.Draw();
 			Compute_iso_cube_placement(number_of_rows,3, pyramid_boxes, first_run);
-			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
-			{  
-				 ball.Draw();
-				
-			}			
 			
-			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
-			{  
-				 
-				 egg.Draw();
-			}			
-			diskright.Draw();
-
-			diskleft.Draw();
-
-			
-		  }else{
-			qbert.Draw();
-			Compute_iso_cube_placement(number_of_rows,3, pyramid_boxes, first_run);
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
 			{  
 				 ball.Draw();
@@ -411,7 +415,14 @@ int main()
 			}			
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
 			{  
-				 egg.Draw();
+				if(egg.getPositionY() < 311)
+				{
+					egg.Draw();
+				}
+				else
+				{
+					snake.Draw();
+				}
 				 
 			}
 			if(diskright.getdraw()==1){
@@ -421,12 +432,10 @@ int main()
 				diskleft.Draw();
 			}
 
+			if(qbert.getFallingStatus()!=1){
+				qbert.Draw();
 			
-
-			qbert.Draw();
-		  
-		  
-		  }
+			}
 
 			if(key_pushed != 666){
 				qbert.playerAnimationUpdate(key_pushed);

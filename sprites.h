@@ -46,6 +46,7 @@ protected:
 	bool falling_out_of_bounds;
 	bool enemyMove;
 	int lives;
+	bool disable;
 public:
 	
 	Sprites(
@@ -89,12 +90,14 @@ public:
 		enemyMove = true;
 		lives = 3;
 		draw=1;
+		disable = 0;
 	}	
 	
 	void setpositionX(unsigned i){
 		positionX=i;
 	}
 
+	void setIndex(unsigned i){ index = i; }
 	void setpositionY(unsigned i){
 		positionY=i;
 	}
@@ -219,15 +222,36 @@ public:
 				frameCount = 0;
 			}
 	}
-
+	void animationSnake(Sprites qbert)
+	{
+		if(++frameCount >= frameDelay)
+		{
+			currFrame += animationDirection;
+						
+			if(currFrame == 1)
+			{	
+				moveUp(20);
+			}else if(currFrame == 2)
+			{   
+				//moveDown(20);
+				chaseQbert(qbert);
+			}
+					
+			if(currFrame >= maxFrame)
+			{
+				currFrame = 0;
+			}
+			else if(currFrame <= 0)
+			{
+				currFrame = maxFrame - 1;
+			}
+			frameCount = 0;
+		}
+	}
 	void animationMove()
 	{
-	   
-			
-		
 		if(++frameCount >= frameDelay)
 			{	
-
 				currFrame += animationDirection;
 					if(enemyMove)
 					{	
@@ -268,6 +292,59 @@ public:
 	    
 	}
 
+	void chaseQbert(Sprites qbert)
+	{
+		if(qbert.getPositionX() < positionX && qbert.getPositionY() < positionY)
+		{
+			moveUpLeft();
+		}
+		else if(qbert.getPositionX() < positionX && qbert.getPositionY() > positionY)
+		{
+			moveDownLeft();
+		}
+		else if(qbert.getPositionX() > positionX && qbert.getPositionY() < positionY)
+		{
+			moveUpRight();
+		}
+		else if(qbert.getPositionX() > positionX && qbert.getPositionY() > positionY)
+		{
+			moveUpRight();
+		}
+		else if(qbert.getPositionX() == positionX && qbert.getPositionY() < positionY)
+		{
+			if(rand() % 2 == 0)
+			{
+				moveUpLeft();
+			}
+			else
+			{
+				moveUpRight();			
+			}
+		}
+		else if(qbert.getPositionX() == positionX && qbert.getPositionY() > positionY)
+		{
+			if(rand() % 2 == 0)
+			{
+				moveDownLeft();
+			}
+			else
+			{
+				moveDownRight();			
+			}
+		}
+		else if(qbert.getPositionY() == positionY && qbert.getPositionX() < positionX)
+		{
+			moveUpLeft();
+		}
+		else if(qbert.getPositionY() == positionY && qbert.getPositionX() > positionX)
+		{
+			moveUpRight();
+		}
+		else
+		{
+			std::cout <<"eeeeeeeeeeeeeera\n";
+		}
+	}
 	void playerAnimationUpdate(unsigned i)
 	{	
 		
@@ -280,41 +357,20 @@ public:
 			if(++frameCount >= frameDelay)
 			{
 				currFrame += animationDirection;
-
-				 
-					
-					
+				
 				if(currFrame >= maxFrame)
 				{   
-					  
 				    if(i == 0){
-						index=432;
 						moveUpRight();
-						std::cout<<"po:"<<positionY<<"\n";
-					/*	if(positionX == 384 && positionY == 223 ){
-							positionX =304;
-							positionY =145;
-							index=0;
-						}*/
 					}
 					else if(i == 1){
-						index=482;
 						moveDownLeft();
 					}
 					else if(i == 2){
-						index=532;
 						moveUpLeft();
-						std::cout<<"po:"<<positionY<<"\n";
-						/*if(positionX == 224 && positionY == 223 ){
-							positionX =304;
-							positionY =145;
-							index=0;
-						}*/
 					}
 					else if(i == 3){
-						index=0;
 						moveDownRight();
-						
 					}
 					else {
 						assert(0);
