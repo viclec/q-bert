@@ -39,7 +39,7 @@ struct pyramid{
 
 bool keys[] = {false, false, false, false};
 enum KEYS{UP, DOWN, LEFT, RIGHT};
-enum CHARACTERS{QBERT, SNAKE, BALL, DISK, ISO};
+enum CHARACTERS{QBERT, SNAKE, EGG, DISK, ISO, BALL};
 
 int h1 = 7;
 int h3 = 26;
@@ -148,7 +148,7 @@ int main()
 	bool render = false;
 	const float FPS = 60.0;
 	unsigned key_pushed = 666;
-	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178};
+	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178, 213};
 	
 	unsigned number_of_rows= 7;
 	unsigned blocksLeft = (number_of_rows * (number_of_rows + 1) ) / 2;
