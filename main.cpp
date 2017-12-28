@@ -224,6 +224,12 @@ int main()
 		1, 10, 1, 0,
 		1, 304, 165);
 
+	Sprites egg(bitmap, 
+		spriteHeightInBitmap[EGG], ballX, ballY,
+		8, 8,
+		ballFrames, 5, 
+		1, 10, 1, 0,
+		1, 304, 165);
 
 	Sprites diskright(bitmap
 		,spriteHeightInBitmap[DISK],37,30
@@ -339,10 +345,16 @@ int main()
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
 			{   
 				  ball.animationMove();
-			
+				 
 				qbert.qbertcollision(ball);
 			}
-	
+			
+			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
+			{  
+				  egg.animationMove();
+				
+			}
+
 		    diskright.animationUpdate();
 			diskleft.animationUpdate();
 			
@@ -364,6 +376,11 @@ int main()
 				
 			}			
 			
+			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
+			{  
+				 
+				 egg.Draw();
+			}			
 			diskright.Draw();
 
 			diskleft.Draw();
@@ -377,7 +394,11 @@ int main()
 				 ball.Draw();
 				
 			}			
-			
+			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
+			{  
+				 egg.Draw();
+				 
+			}		
 			diskright.Draw();
 
 			diskleft.Draw();
