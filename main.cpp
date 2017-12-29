@@ -223,16 +223,18 @@ int main()
 	// ADDON INSTALL
 	//==============================================
 	al_install_keyboard();
+	al_install_audio();
 	al_init_image_addon();
 	al_init_font_addon();	
 	al_init_ttf_addon();
+	al_init_acodec_addon();
 	al_init_primitives_addon();
 
 	ALLEGRO_FONT *font = al_load_ttf_font("pirulen.ttf",20,0 );
-	if (!font){
-      fprintf(stderr, "Could not load 'pirulen.ttf'.\n");
-      return -1;
-   }
+	ALLEGRO_SAMPLE *hop = al_load_sample("Hop.wav");
+	ALLEGRO_SAMPLE *coilyHop = al_load_sample("Ahop.wav");
+	ALLEGRO_SAMPLE *fall = al_load_sample("fall.wav");
+	al_reserve_samples(1);
 
 	//==============================================
 	// PROJECT INIT
@@ -307,6 +309,7 @@ int main()
 		
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
+			al_play_sample(hop, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 			if(qbert.getAnimationStatus())
 				continue;
 			switch(ev.keyboard.keycode)
@@ -377,6 +380,7 @@ int main()
 			{
 				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes);
 				if(qbertfall==1){
+					al_play_sample(fall, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 					qbert.set_Fall(true);
 					qbertfall=0;
 				}
@@ -472,6 +476,9 @@ int main()
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);						
+	al_destroy_sample(hop);						
+	al_destroy_sample(coilyHop);						
+	al_destroy_sample(fall);						
 
 	return 0;
 }

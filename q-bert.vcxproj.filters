@@ -26,6 +26,9 @@
     <None Include="pirulen.ttf">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Hop.wav">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
