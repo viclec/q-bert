@@ -9,6 +9,9 @@
 const int WIDTH = 800;
 const int HEIGHT = 640;
 
+unsigned long points = 0;
+unsigned remainingDisks = 2;
+
 ALLEGRO_BITMAP* bitmap = NULL;
 
 int qbertfall = 0;
@@ -63,8 +66,10 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	{	
 		if(q_x == p[counter].x && q_y == p[counter].y)
 		{
-			if(p[counter].multiplier == 1)
+			if(p[counter].multiplier == 1){
 				blocksLeft--;
+				points += 25;	//color change
+			}
 			flag = false;
 			p[counter].multiplier = 7;
 			break;
@@ -73,6 +78,8 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	}
 
 	if(blocksLeft == 0){
+		points += 50 * remainingDisks;	//remaining disks bonus
+		points += 1000;	//completing screen
 		//std::cout << "kerdises wow\n";
 		done = true;
 	}
@@ -86,6 +93,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 		{	
 				
 				if(diskLeft.getlives()!=0){
+					remainingDisks--;
 					qbert.setpositionX(304) ;
 					qbert.setpositionY(145) ;
 					diskLeft.zerolives();
@@ -103,6 +111,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 		{	
 
 			if(diskRight.getlives()!=0){
+					remainingDisks--;
 					qbert.setpositionX(304) ;
 					qbert.setpositionY(145) ;
 					diskRight.zerolives();
@@ -165,6 +174,7 @@ int main()
 	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
+
 	unsigned key_pushed = 666;
 	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178, 213, 432, 482 ,532};
 	
@@ -218,6 +228,11 @@ int main()
 	al_init_ttf_addon();
 	al_init_primitives_addon();
 
+	ALLEGRO_FONT *font = al_load_ttf_font("pirulen.ttf",20,0 );
+	if (!font){
+      fprintf(stderr, "Could not load 'pirulen.ttf'.\n");
+      return -1;
+   }
 
 	//==============================================
 	// PROJECT INIT
@@ -445,7 +460,10 @@ int main()
 			
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-		}	
+			char buffer [33];
+			itoa (points,buffer,10);
+			al_draw_text(font, al_map_rgb(255,255,255), 150, 100,ALLEGRO_ALIGN_CENTRE, buffer);
+		}
 	}
 	//==============================================
 	// DESTROY ALLEGRO OBJECTS
