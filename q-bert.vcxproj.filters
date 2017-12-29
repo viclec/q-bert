@@ -29,6 +29,12 @@
     <None Include="Hop.wav">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Ahop.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fall.wav">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
