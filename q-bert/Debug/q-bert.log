@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\users\geo\documents\github\q-bert\main.cpp(468): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
+          c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdlib.h(867) : see declaration of 'itoa'
+  q-bert.vcxproj -> C:\Users\geo\Documents\GitHub\q-bert\Debug\q-bert.exe
