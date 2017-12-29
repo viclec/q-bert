@@ -2,7 +2,7 @@
 #include <iostream>
 #include <allegro5\allegro.h>
 #include <allegro5\allegro_image.h>
-
+#include <string>
 
 
 class Sprites{
