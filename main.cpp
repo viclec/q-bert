@@ -379,13 +379,15 @@ int main()
 				{
 					egg.animationMove();
 					qbert.qbertcollision(egg);
-					//snake.setpositionX(egg.getPositionX());
-					//snake.setpositionY(egg.getPositionY());
+					snake.setpositionX(egg.getPositionX());
+					snake.setpositionY(egg.getPositionY());
 				}
 				else
 				{
 					snake.animationSnake(qbert);
-					qbert.qbertcollision(snake);
+					if(qbert.qbertcollision(snake)){
+						std::cout << "SNAKE";	
+					}
 				}
 			}
 
