@@ -176,7 +176,7 @@ int main()
 	const unsigned qbertFrames = 4;
 	
 	const unsigned snakeY = 65;
-	const unsigned snakeX = 41;
+	const unsigned snakeX = 40;
 	const unsigned snakeFrames = 4;
 	
 	const unsigned ballY = 35;
@@ -238,7 +238,7 @@ int main()
 	Sprites snake(bitmap,
 		spriteHeightInBitmap[SNAKE], snakeX, snakeY,
 		8, 8,
-		snakeFrames, 40,
+		snakeFrames, 20,
 		1, 10, 1, 0,
 		1, 304, 145);
 

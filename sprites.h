@@ -233,7 +233,6 @@ public:
 				moveUp(20);
 			}else if(currFrame == 2)
 			{   
-				//moveDown(20);
 				chaseQbert(qbert);
 			}
 					
@@ -308,7 +307,7 @@ public:
 		}
 		else if(qbert.getPositionX() > positionX && qbert.getPositionY() > positionY)
 		{
-			moveUpRight();
+			moveDownRight();
 		}
 		else if(qbert.getPositionX() == positionX && qbert.getPositionY() < positionY)
 		{
