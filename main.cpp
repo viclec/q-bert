@@ -41,7 +41,7 @@ struct pyramid{
 
 bool keys[] = {false, false, false, false};
 enum KEYS{UP, DOWN, LEFT, RIGHT};
-enum CHARACTERS{QBERT, SNAKE, EGG, DISK, ISO, BALL ,QBERTBACK ,QBERTFLIP ,QBERTBACKFLIP};
+enum CHARACTERS{QBERT, SNAKE, EGG, DISK, ISO, BALL ,QBERTBACK ,QBERTFLIP ,QBERTBACKFLIP ,QBERTCURSES};
 
 int h1 = 7;
 int h3 = 26;
@@ -176,7 +176,7 @@ int main()
 	const float FPS = 60.0;
 
 	unsigned key_pushed = 666;
-	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178, 213, 432, 482 ,532};
+	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178, 213, 432, 482 ,532 ,302};
 	
 	unsigned number_of_rows= 7;
 	unsigned blocksLeft = (number_of_rows * (number_of_rows + 1) ) / 2;
@@ -185,8 +185,8 @@ int main()
 	const unsigned qbertX = 37;
 	const unsigned qbertFrames = 4;
 	
-	const unsigned snakeY = 65;
-	const unsigned snakeX = 40;
+	const unsigned snakeY = 50;
+	const unsigned snakeX = 30;
 	const unsigned snakeFrames = 4;
 	
 	const unsigned ballY = 35;
@@ -253,16 +253,16 @@ int main()
 		1, 304, 145);
 	
 	Sprites snake(bitmap,
-		spriteHeightInBitmap[SNAKE], snakeX, snakeY,
+		spriteHeightInBitmap[SNAKE], 30, 50,
 		8, 8,
-		snakeFrames, 20,
+		snakeFrames, 15,
 		1, 10, 1, 0,
 		1, 304, 145);
 
 	Sprites ball(bitmap, 
 		spriteHeightInBitmap[BALL], ballX, ballY,
 		8, 8,
-		ballFrames, 5, 
+		ballFrames, 10, 
 		1, 10, 1, 0,
 		1, 304, 165);
 
@@ -391,7 +391,7 @@ int main()
 			{   
 				ball.animationMove();
 			}
-			
+		//	std::cout<<"qbert: "<<qbert.getPositionY()<<"   "<<qbert.getPositionX()<<"\n";
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
 			{  
 				if(egg.getPositionY() < 311)
@@ -399,7 +399,9 @@ int main()
 					egg.animationMove();
 					qbert.qbertcollision(egg);
 					snake.setpositionX(egg.getPositionX());
-					snake.setpositionY(egg.getPositionY());
+					snake.setpositionY(egg.getPositionY()-20);
+			//		std::cout<<"snake: "<<snake.getPositionY()<<" "<<snake.getPositionX() <<"\n";
+
 				}
 				else
 				{
@@ -454,6 +456,7 @@ int main()
 			}
 
 			if(qbert.getFallingStatus()!=1){
+				movesnake=1;
 				qbert.Draw();
 			
 			}

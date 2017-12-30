@@ -5,7 +5,7 @@
 #include <allegro5\allegro_audio.h>
 #include <allegro5\allegro_acodec.h>
 #include <string>
-
+int movesnake=0;
 
 class Sprites{
 protected:
@@ -107,6 +107,20 @@ public:
 	void set_Fall(bool arg ){
 		falling_out_of_bounds=arg;
 	}
+
+	void set_Curse(unsigned init ,unsigned x ,unsigned y){
+			index = init;
+			spriteWidth = x;
+			spriteHeight = y;
+	}
+
+	void reset_Curse(){
+			index = 0;
+			spriteWidth = 36;
+			spriteHeight = 48;
+	}
+
+
 
 	void gotodisk(){
 		move_to_right_disk=true;
@@ -232,10 +246,13 @@ public:
 						
 			if(currFrame == 1)
 			{	
-				moveUp(20);
+				//moveUp(20);
 			}else if(currFrame == 2)
-			{   
-				chaseQbert(qbert);
+			{   if(movesnake==1){
+				 std::cout<<"move\n";
+				 chaseQbert(qbert);
+				 movesnake=0;
+				}
 			}
 					
 			if(currFrame >= maxFrame)
@@ -297,57 +314,71 @@ public:
 	{
 		if(qbert.getPositionX() < positionX && qbert.getPositionY() < positionY)
 		{
-			moveUpLeft();
+			moveUp(26);
+		    moveLeft(16);  
 		}
 		else if(qbert.getPositionX() < positionX && qbert.getPositionY() > positionY)
 		{
-			moveDownLeft();
+			moveDown(26);
+		    moveLeft(16);  
 		}
 		else if(qbert.getPositionX() > positionX && qbert.getPositionY() < positionY)
 		{
-			moveUpRight();
+			moveUp(26);
+		    moveRight(16);  
 		}
 		else if(qbert.getPositionX() > positionX && qbert.getPositionY() > positionY)
 		{
-			moveDownRight();
+			moveDown(26);
+		    moveRight(16);  
 		}
 		else if(qbert.getPositionX() == positionX && qbert.getPositionY() < positionY)
 		{
 			if(rand() % 2 == 0)
 			{
-				moveUpLeft();
+				moveUp(26);
+		    moveLeft(16);  
 			}
 			else
 			{
-				moveUpRight();			
+				moveUp(26);
+		    moveRight(16); 	
 			}
 		}
 		else if(qbert.getPositionX() == positionX && qbert.getPositionY() > positionY)
 		{
 			if(rand() % 2 == 0)
 			{
-				moveDownLeft();
+				moveDown(26);
+		        moveLeft(16);  
 			}
 			else
 			{
-				moveDownRight();			
+				moveDown(26);
+		        moveRight(16);  		
 			}
 		}
 		else if(qbert.getPositionY() == positionY && qbert.getPositionX() < positionX)
 		{
-			moveUpLeft();
+			moveUp(26);
+		    moveLeft(16);  
 		}
 		else if(qbert.getPositionY() == positionY && qbert.getPositionX() > positionX)
 		{
-			moveUpRight();
+			moveUp(26);
+		    moveRight(16);  
 		}
 		else
 		{
-			std::cout <<"eeeeeeeeeeeeeera\n";
+			//moveDown(40/2);
 		}
 	}
 	void playerAnimationUpdate(unsigned i)
 	{	
+
+		if(index == 302){
+		  reset_Curse();
+		}
 		
 		if(falling_out_of_bounds==true){
 			moveDown(5);
@@ -396,8 +427,12 @@ public:
 			positionX - frameWidth < enemy.positionX + enemy.frameWidth &&
 			positionY + frameHeight > enemy.positionY - enemy.frameHeight &&
 			positionY - frameHeight < enemy.positionY + enemy.frameHeight)
-		{
+		{	
+
+			set_Curse(302 , 96 ,78 );
+	
 			std::cout << "collision\n";
+			
 			return true;
 		}
 		return false;
