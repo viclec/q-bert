@@ -11,7 +11,7 @@ const int WIDTH = 800;
 const int HEIGHT = 640;
 
 unsigned long points = 0;
-unsigned long rounds = 0;
+unsigned long rounds = 1;
 unsigned remainingDisks = 2;
 unsigned number_of_rows= 7;
 const unsigned blocksInitial = (number_of_rows * (number_of_rows + 1) ) / 2;
@@ -121,7 +121,7 @@ void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyr
 	first_run = false;
 }
 
-bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p, bool first_run)
+bool pyramid_colision(Sprites &qbert, Sprites &diskLeft, Sprites &diskRight, Sprites &ball, Sprites &egg, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p, bool first_run)
 {	
 	//########################
 	// bound width, height
@@ -137,24 +137,39 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	{	
 		if(q_x == p[counter].x && q_y == p[counter].y)
 		{
-			if(p[counter].multiplier == 1){
+			if(p[counter].multiplier == 6 * (rounds % 3 - 1) + 1){
 				blocksLeft--;
 				points += 25;	//color change
 			}
 			onAir = false;
-			p[counter].multiplier = 7;
+			p[counter].multiplier = 6 * (rounds % 3) + 1;
 			break;
 		}
 		counter++;
 	}
 
 	if(blocksLeft == 0){
+		int i;
 		points += 50 * remainingDisks;	//remaining disks bonus
 		points += 1000;	//completing screen
 		
-		/*first_run = true;
 		blocksLeft = blocksInitial;
+		//TODO rounds
 		rounds++;
+		if(rounds % 3 == 0){
+			rounds = 1;
+		}
+		for(i = 0; i < p.size(); i++){
+			p[i].multiplier = 6 * (rounds % 3 - 1) + 1;
+		}
+		qbert.setpositionX(304);
+		qbert.setpositionY(145);
+		ball.setpositionX(304);
+		ball.setpositionY(165);
+		egg.setpositionX(304);
+		egg.setpositionY(165);
+
+		/*first_run = true;
 		Compute_iso_cube_placement(7, 7, p, first_run);
 		return false;*/
 		//std::cout << "kerdises wow\n";
@@ -162,42 +177,22 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	}
 	if( qbert.getAnimationStatus() == false && onAir == true )
 	{	
-		if(q_y != diskLeft.getPositionY() && q_y != diskRight.getPositionY())
-		{    
-			qbertfall=1;
-		}
-		else if(q_y == diskLeft.getPositionY() && q_x == diskLeft.getPositionX())
+		if(q_y == diskLeft.getPositionY() && q_x == diskLeft.getPositionX() && diskLeft.getlives()!=0)
 		{	
-				
-				if(diskLeft.getlives()!=0){
-					remainingDisks--;
-					diskLeft.zerolives();
-				    diskLeft.setdraw(0);
-					qbertfall=0; 
-				}else{
-					qbertfall=1; 
-				}
-				
-
-			//gototorightdisk=1; 
-			
+			remainingDisks--;
+			diskLeft.zerolives();
+			diskLeft.setdraw(0);
+			qbertfall=0;
 		}
-		else if(q_y == diskRight.getPositionY() && q_x == diskRight.getPositionX())
+		else if(q_y == diskRight.getPositionY() && q_x == diskRight.getPositionX() && diskRight.getlives()!=0)
 		{	
-
-			if(diskRight.getlives()!=0){
-					remainingDisks--;
-					diskRight.zerolives();
-					diskRight.setdraw(0);
-					qbertfall=0; 
-				}else{
-					qbertfall=1; 
-				}
-
-
-
-			//gototorightdisk=1; 
+			remainingDisks--;
+			diskRight.zerolives();
+			diskRight.setdraw(0);
+			qbertfall=0;
 			
+		}else{
+			qbertfall = 1;
 		}
 		
 		
@@ -497,7 +492,7 @@ int main()
 			unsigned qy = qbert.getPositionY();
 			if(!first_run)
 			{
-				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes, first_run);
+				pyramid_colision(qbert,diskleft,diskright, ball, egg, blocksLeft,done,pyramid_boxes, first_run);
 				
 				if(qbertfall==1){
 					if (qbert.getPositionY() > 350){
