@@ -24,4 +24,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Ahop.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fall.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Hop.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="sheet.png">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
