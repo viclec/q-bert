@@ -252,11 +252,13 @@ int main()
 	al_init_primitives_addon();
 
 	ALLEGRO_FONT *font = al_load_ttf_font("pirulen.ttf",20,0 );
+	ALLEGRO_FONT *credits = al_load_ttf_font("pirulen.ttf",14,0 );
 	ALLEGRO_SAMPLE *hop = al_load_sample("Hop.wav");
 	ALLEGRO_SAMPLE *coilyHop = al_load_sample("Ahop.wav");
 	ALLEGRO_SAMPLE *fall = al_load_sample("fall.wav");
 	ALLEGRO_SAMPLE *coilyfall = al_load_sample("coilyfall.wav");
 	ALLEGRO_SAMPLE *curse = al_load_sample("curse.wav");
+	ALLEGRO_SAMPLE *start = al_load_sample("start.wav");
 	al_reserve_samples(1);
 
 	//==============================================
@@ -358,6 +360,37 @@ int main()
 	al_start_timer(timer);
 	ALLEGRO_EVENT ev;
 
+	al_draw_text(font, al_map_rgb(0,255,255), 400, 200,ALLEGRO_ALIGN_CENTRE, "Press ENTER to start!");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 400,ALLEGRO_ALIGN_CENTRE, "University of Crete");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 450,ALLEGRO_ALIGN_CENTRE, "Department of Computer Science");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 500,ALLEGRO_ALIGN_CENTRE, "University of Crete Department of Computer Science");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 550,ALLEGRO_ALIGN_CENTRE, "CS-454. Development of Intelligent Interfaces and Games");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 600,ALLEGRO_ALIGN_CENTRE, "Term Project, Fall Semester 2017");
+	
+	qbert.Draw();
+	al_flip_display();
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_play_sample(start, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+	while(true){    
+		
+		al_wait_for_event(event_queue, &ev);
+		if(ev.type == ALLEGRO_EVENT_KEY_DOWN){
+			if(ev.keyboard.keycode == ALLEGRO_KEY_ENTER){
+				break;
+			}else if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+				al_destroy_bitmap(bitmap);
+				al_destroy_timer(timer);
+				al_destroy_event_queue(event_queue);
+				al_destroy_display(display);						
+				al_destroy_sample(hop);						
+				al_destroy_sample(coilyHop);						
+				al_destroy_sample(fall);						
+
+				return 0;
+			}
+		}
+	}
+
 	while(!done)
 	{    
 		
@@ -453,6 +486,7 @@ int main()
 					 }
 					 if(qbert.getlives()==0){
 						 qbertlive1.setIndex(10000);
+						 gameOver(font);
 					 }
 						std::cout<<"lives"<<qbert.getlives()<<"\n";
 			        }
@@ -632,11 +666,11 @@ int main()
 				qbert.Draw();
 				if(qbert.qbert_get_collision()==1){
 					qbert.setAnimationStatus(true);
-				clearMonsters();
-			    CURSE_CLOUD.setpositionX(qbert.getPositionX()-15); 
-				CURSE_CLOUD.setpositionY(qbert.getPositionY()-35); 
-				CURSE_CLOUD.Draw();
-				al_play_sample(curse, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					clearMonsters();
+					CURSE_CLOUD.setpositionX(qbert.getPositionX()-15); 
+					CURSE_CLOUD.setpositionY(qbert.getPositionY()-35); 
+					CURSE_CLOUD.Draw();
+					al_play_sample(curse, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
 			}
 			
@@ -661,7 +695,7 @@ int main()
 		al_wait_for_event(event_queue, &ev);
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 			{
-				if(ev.keyboard.keycode = ALLEGRO_KEY_ESCAPE){
+				if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE){
 					al_destroy_bitmap(bitmap);
 					al_destroy_timer(timer);
 					al_destroy_event_queue(event_queue);

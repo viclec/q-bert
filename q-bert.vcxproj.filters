@@ -44,5 +44,23 @@
     <None Include="curse.wav">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="bonk.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="byby.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="coilybites.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="disk.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="extra.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="start.wav">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
