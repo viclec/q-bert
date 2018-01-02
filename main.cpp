@@ -11,7 +11,10 @@ const int WIDTH = 800;
 const int HEIGHT = 640;
 
 unsigned long points = 0;
+unsigned long rounds = 1;
 unsigned remainingDisks = 2;
+unsigned number_of_rows= 7;
+const unsigned blocksInitial = (number_of_rows * (number_of_rows + 1) ) / 2;
 
 ALLEGRO_BITMAP* bitmap = NULL;
 int y=0;
@@ -33,6 +36,8 @@ double cubeSizeY = 38;
 
 double diskX = 5;
 double diskY = 150;
+
+bool done = false;
 
 struct pyramid{
 	unsigned x;
@@ -60,82 +65,27 @@ void wait ( int seconds )
   while (clock() < endwait) {}
 }
 
-bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
-{	
-	//########################
-	// bound width, height
-	//########################
-	unsigned counter = 0;
-	unsigned q_x = qbert.getPositionX();
-	unsigned q_y = qbert.getPositionY() + 36;
+void gameOver(ALLEGRO_FONT* font){
+	done = true;
+	std::stringstream ss;
+	char buffer [33];
+	itoa (points,buffer,10);
+	ss << "Total Points: " << buffer;
+	const std::string tmp = ss.str();
 	
-	bool flag = true;
-	
-    int a=100;	
-	while(counter < p.size())
-	{	
-		if(q_x == p[counter].x && q_y == p[counter].y)
-		{
-			if(p[counter].multiplier == 1){
-				blocksLeft--;
-				points += 25;	//color change
-			}
-			flag = false;
-			p[counter].multiplier = 7;
-			break;
-		}
-		counter++;
-	}
+	al_draw_text(font, al_map_rgb(255,255,255), 400, 200,ALLEGRO_ALIGN_CENTRE, "Game over!");
+	al_draw_text(font, al_map_rgb(255,0,0), 400, 300,ALLEGRO_ALIGN_CENTRE, tmp.c_str());
+	al_draw_text(font, al_map_rgb(255,0,0), 400, 400,ALLEGRO_ALIGN_CENTRE, "Press ESCAPE to exit.");
+	/*itoa (rounds,buffer,10);
+	ss << "Total Rounds: " << buffer;
+	tmp = ss.str();
+	al_draw_text(font, al_map_rgb(255,0,0), 400, 330,ALLEGRO_ALIGN_CENTRE, tmp.c_str());*/
+	al_flip_display();
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+}
 
-	if(blocksLeft == 0){
-		points += 50 * remainingDisks;	//remaining disks bonus
-		points += 1000;	//completing screen
-		//std::cout << "kerdises wow\n";
-		done = true;
-	}
-	if( qbert.getAnimationStatus() == false && flag == true )
-	{	
-		if(q_y != diskLeft.getPositionY() && q_y != diskRight.getPositionY())
-		{    
-			qbertfall=1;
-		}
-		else if(q_y == diskLeft.getPositionY() && q_x == diskLeft.getPositionX())
-		{	
-				
-				if(diskLeft.getlives()!=0){
-					remainingDisks--;
-					diskLeft.zerolives();
-				    diskLeft.setdraw(0);
-					qbertfall=0; 
-				}else{
-					qbertfall=1; 
-				}
-				
+void clearMonsters(){
 
-			//gototorightdisk=1; 
-			
-		}
-		else if(q_y == diskRight.getPositionY() && q_x == diskRight.getPositionX())
-		{	
-
-			if(diskRight.getlives()!=0){
-					remainingDisks--;
-					diskRight.zerolives();
-					diskRight.setdraw(0);
-					qbertfall=0; 
-				}else{
-					qbertfall=1; 
-				}
-
-
-
-			//gototorightdisk=1; 
-			
-		}
-		
-		
-	}
-	 return false;	
 }
 
 void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyramid, bool &first_run){
@@ -171,21 +121,98 @@ void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyr
 	first_run = false;
 }
 
+bool pyramid_colision(Sprites &qbert, Sprites &diskLeft, Sprites &diskRight, Sprites &ball, Sprites &egg, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p, bool first_run)
+{	
+	//########################
+	// bound width, height
+	//########################
+	unsigned counter = 0;
+	unsigned q_x = qbert.getPositionX();
+	unsigned q_y = qbert.getPositionY() + 36;
+	
+	bool onAir = true;
+	
+    int a=100;	
+	while(counter < p.size())
+	{	
+		if(q_x == p[counter].x && q_y == p[counter].y)
+		{
+			if(p[counter].multiplier == 6 * (rounds % 3 - 1) + 1){
+				blocksLeft--;
+				points += 25;	//color change
+			}
+			onAir = false;
+			p[counter].multiplier = 6 * (rounds % 3) + 1;
+			break;
+		}
+		counter++;
+	}
+
+	if(blocksLeft == 0){
+		int i;
+		points += 50 * remainingDisks;	//remaining disks bonus
+		points += 1000;	//completing screen
+		
+		blocksLeft = blocksInitial;
+		//TODO rounds
+		rounds++;
+		if(rounds % 3 == 0){
+			rounds = 1;
+		}
+		for(i = 0; i < p.size(); i++){
+			p[i].multiplier = 6 * (rounds % 3 - 1) + 1;
+		}
+		qbert.setpositionX(304);
+		qbert.setpositionY(145);
+		ball.setpositionX(304);
+		ball.setpositionY(165);
+		egg.setpositionX(304);
+		egg.setpositionY(165);
+
+		/*first_run = true;
+		Compute_iso_cube_placement(7, 7, p, first_run);
+		return false;*/
+		//std::cout << "kerdises wow\n";
+		//done = true;
+	}
+	if( qbert.getAnimationStatus() == false && onAir == true )
+	{	
+		if(q_y == diskLeft.getPositionY() && q_x == diskLeft.getPositionX() && diskLeft.getlives()!=0)
+		{	
+			remainingDisks--;
+			diskLeft.zerolives();
+			diskLeft.setdraw(0);
+			qbertfall=0;
+		}
+		else if(q_y == diskRight.getPositionY() && q_x == diskRight.getPositionX() && diskRight.getlives()!=0)
+		{	
+			remainingDisks--;
+			diskRight.zerolives();
+			diskRight.setdraw(0);
+			qbertfall=0;
+			
+		}else{
+			qbertfall = 1;
+		}
+		
+		
+	}
+	 return false;	
+}
+
 int main()
 {	//==============================================
 	// PROJECT VARIABLES
 	//==============================================
 	std::vector<pyramid> pyramid_boxes;
 	bool first_run = true;
-	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
 
 	unsigned key_pushed = 666;
 	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178, 213, 432, 482 ,532 ,302};
 	
-	unsigned number_of_rows= 7;
-	unsigned blocksLeft = (number_of_rows * (number_of_rows + 1) ) / 2;
+	unsigned blocksLeft = blocksInitial;
 
 	const unsigned qbertY = 50;
 	const unsigned qbertX = 37;
@@ -237,9 +264,17 @@ int main()
 	al_init_primitives_addon();
 
 	ALLEGRO_FONT *font = al_load_ttf_font("pirulen.ttf",20,0 );
+	ALLEGRO_FONT *title = al_load_ttf_font("pirulen.ttf",80,0 );
+	ALLEGRO_FONT *credits = al_load_ttf_font("pirulen.ttf",14,0 );
+
 	ALLEGRO_SAMPLE *hop = al_load_sample("Hop.wav");
 	ALLEGRO_SAMPLE *coilyHop = al_load_sample("Ahop.wav");
 	ALLEGRO_SAMPLE *fall = al_load_sample("fall.wav");
+	ALLEGRO_SAMPLE *coilyfall = al_load_sample("coilyfall.wav");
+	ALLEGRO_SAMPLE *coilybites = al_load_sample("coilybites.wav");
+	ALLEGRO_SAMPLE *curse = al_load_sample("curse.wav");
+	ALLEGRO_SAMPLE *start = al_load_sample("start.wav");
+	ALLEGRO_SAMPLE *disk = al_load_sample("disk.wav");
 	al_reserve_samples(1);
 
 	//==============================================
@@ -304,14 +339,14 @@ int main()
 	Sprites ball(bitmap, 
 		spriteHeightInBitmap[BALL], ballX, ballY,
 		8, 8,
-		ballFrames, 10, 
+		ballFrames, 15, 
 		1, 10, 1, 0,
 		1, 304, 165);
 
 	Sprites egg(bitmap, 
 		spriteHeightInBitmap[EGG], ballX, ballY,
 		8, 8,
-		ballFrames, 5, 
+		ballFrames, 12, 
 		1, 10, 1, 0,
 		1, 304, 165);
 
@@ -339,11 +374,47 @@ int main()
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 
 	al_start_timer(timer);
+	ALLEGRO_EVENT ev;
+
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 100,ALLEGRO_ALIGN_CENTRE, "Alexis Pavlakis 3422");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 135,ALLEGRO_ALIGN_CENTRE, "George Zervas 3456");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 170,ALLEGRO_ALIGN_CENTRE, "Victor Lecomte 3449");
+	al_draw_text(font, al_map_rgb(255,0,0), 400, 320,ALLEGRO_ALIGN_CENTRE, "Press ENTER to start!");
+	al_draw_text(title, al_map_rgb(255,255,255), 400, 220,ALLEGRO_ALIGN_CENTRE, "Q*bert");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 480,ALLEGRO_ALIGN_CENTRE, "University of Crete");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 510,ALLEGRO_ALIGN_CENTRE, "Department of Computer Science");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 540,ALLEGRO_ALIGN_CENTRE, "University of Crete Department of Computer Science");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 570,ALLEGRO_ALIGN_CENTRE, "CS-454. Development of Intelligent Interfaces and Games");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 600,ALLEGRO_ALIGN_CENTRE, "Term Project, Fall Semester 2017");
+
+	al_flip_display();
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_play_sample(start, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+	while(true){    
+		
+		al_wait_for_event(event_queue, &ev);
+		if(ev.type == ALLEGRO_EVENT_KEY_DOWN){
+			if(ev.keyboard.keycode == ALLEGRO_KEY_ENTER){
+				break;
+			}else if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+				al_destroy_bitmap(bitmap);
+				al_destroy_timer(timer);
+				al_destroy_event_queue(event_queue);
+				al_destroy_display(display);						
+				al_destroy_sample(hop);						
+				al_destroy_sample(coilyHop);						
+				al_destroy_sample(coilyfall);						
+				al_destroy_sample(disk);						
+				al_destroy_sample(start);						
+
+				return 0;
+			}
+		}
+	}
 
 	while(!done)
 	{    
 		
-		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 		
 		//==============================================
@@ -352,9 +423,9 @@ int main()
 		
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
-			al_play_sample(hop, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 			if(qbert.getAnimationStatus())
 				continue;
+			al_play_sample(hop, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 			switch(ev.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
@@ -421,21 +492,21 @@ int main()
 			unsigned qy = qbert.getPositionY();
 			if(!first_run)
 			{
-				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes);
+				pyramid_colision(qbert,diskleft,diskright, ball, egg, blocksLeft,done,pyramid_boxes, first_run);
 				
 				if(qbertfall==1){
-					al_play_sample(fall, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);	
 					if (qbert.getPositionY() > 350){
 						qbert.lose_live();
-		
+						al_play_sample(fall, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);	
+						
 					 if(qbert.getlives()==20){
 						 qbertlive3.setIndex(10000);
-					 }
-					 if(qbert.getlives()==10){
+					 }else if(qbert.getlives()==10){
 						 qbertlive2.setIndex(10000);
-					 }
-					 if(qbert.getlives()==0){
+					 }else if(qbert.getlives()<=0){
 						 qbertlive1.setIndex(10000);
+						 gameOver(font);
+						 break;
 					 }
 						std::cout<<"lives"<<qbert.getlives()<<"\n";
 			        }
@@ -463,6 +534,8 @@ int main()
 					 }
 					 if(qbert.getlives()==0){
 						 qbertlive1.setIndex(10000);
+						 gameOver(font);
+						 break;
 					 }
 					 ball.setIndex(10000);
 					 ball.setpositionX(500);
@@ -478,7 +551,7 @@ int main()
 				if(egg.getPositionY() < 311)
 				{
 					egg.animationMove();
-				//	qbert.qbertcollision(egg);
+					qbert.qbertcollision(egg);
 					snake.setpositionX(egg.getPositionX());
 					snake.setpositionY(egg.getPositionY()-20);
 			//		std::cout<<"snake: "<<snake.getPositionY()<<" "<<snake.getPositionX() <<"\n";
@@ -489,7 +562,7 @@ int main()
 					if(qbert.qbert_get_collision() == 0){
 			    		snake.animationSnake(qbert);
 						if(qbert.qbertcollision(snake)){
-						//  std::cout << "SNAKE";	
+							al_play_sample(coilybites, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 						}
 					}
 					else if(play == 0 && qbert.get_losing_sprite()>50){
@@ -548,6 +621,7 @@ int main()
 			}
 
 			if(diskleft.getdraw()==0){
+
 				if(qbert.getPositionX()!=304 && qbert.getPositionY()!=144){
 					qbert.set_Fall(false);
 				}else{
@@ -559,12 +633,13 @@ int main()
 					qbert.set_Fall(false);
 				}
 				
-				if(diskleft.getPositionY()>175){	
-					 diskleft.diskmoveUp();
-					 qbert.diskmoveUp();
-				     diskleft.Draw();
+				if(diskleft.getPositionY()>175){
+					al_play_sample(disk, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);	
+					diskleft.diskmoveUp();
+					qbert.diskmoveUp();
+				    diskleft.Draw();
 					
-					 qbert.Draw();
+					qbert.Draw();
 				}else{
 					if(diskleft.getPositionX()<304){
 					 diskleft.diskmoveRight();
@@ -585,7 +660,7 @@ int main()
 					qbert.set_Fall(false);
 				}else{
 					diskright.setdraw(2);
-					qbert.setpositionX(304);
+				    qbert.setpositionX(304);
 					qbert.setpositionY(145);
 
 					qbert.Draw();
@@ -593,11 +668,12 @@ int main()
 				}
 				
 				if(diskright.getPositionY()>175){	
-					 diskright.diskmoveUp();
-					 qbert.diskmoveUp();
-				     diskright.Draw();
+					al_play_sample(disk, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);	
+					diskright.diskmoveUp();
+					qbert.diskmoveUp();
+				    diskright.Draw();
 					
-					 qbert.Draw();
+					qbert.Draw();
 				}else{
 					if(diskright.getPositionX()>304){
 					 diskright.diskmoveLeft();
@@ -613,9 +689,14 @@ int main()
 						
 				qbert.Draw();
 				if(qbert.qbert_get_collision()==1){
-			    CURSE_CLOUD.setpositionX(qbert.getPositionX()-15); 
-				CURSE_CLOUD.setpositionY(qbert.getPositionY()-35); 
-				CURSE_CLOUD.Draw();
+					
+
+				//	qbert.setAnimationStatus(true);
+					clearMonsters();
+					CURSE_CLOUD.setpositionX(qbert.getPositionX()-15); 
+					CURSE_CLOUD.setpositionY(qbert.getPositionY()-35); 
+					CURSE_CLOUD.Draw();
+					al_play_sample(curse, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
 			}
 			
@@ -629,19 +710,33 @@ int main()
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			char buffer [33];
 			itoa (points,buffer,10);
-			al_draw_text(font, al_map_rgb(255,255,255), 150, 100,ALLEGRO_ALIGN_CENTRE, buffer);
+			al_draw_text(font, al_map_rgb(255,255,255), 400, 100,ALLEGRO_ALIGN_CENTRE, buffer);
+			itoa (rounds,buffer,10);
+			al_draw_text(font, al_map_rgb(255,255,255), 400, 120,ALLEGRO_ALIGN_CENTRE, buffer);
 		}
 	}
 	//==============================================
-	// DESTROY ALLEGRO OBJECTS
+	// WAIT TO EXIT AND DESTROY ALLEGRO OBJECTS
 	//==============================================
-	al_destroy_bitmap(bitmap);
-	al_destroy_timer(timer);
-	al_destroy_event_queue(event_queue);
-	al_destroy_display(display);						
-	al_destroy_sample(hop);						
-	al_destroy_sample(coilyHop);						
-	al_destroy_sample(fall);						
+	while(true){    
+		
+		al_wait_for_event(event_queue, &ev);
+		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
+			{
+				if(ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE){
+					al_destroy_bitmap(bitmap);
+					al_destroy_timer(timer);
+					al_destroy_event_queue(event_queue);
+					al_destroy_display(display);						
+					al_destroy_sample(hop);						
+					al_destroy_sample(coilyHop);						
+					al_destroy_sample(fall);							
+					al_destroy_sample(coilyfall);						
+					al_destroy_sample(disk);						
+					al_destroy_sample(start);					
 
-	return 0;
+					return 0;
+				}
+			}
+	}
 }

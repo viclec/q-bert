@@ -15,9 +15,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Ahop.wav" />
+    <None Include="bonk.wav" />
+    <None Include="byby.wav" />
+    <None Include="coilybites.wav" />
+    <None Include="coilyfall.wav" />
+    <None Include="curse.wav" />
+    <None Include="disk.wav" />
+    <None Include="extra.wav" />
     <None Include="fall.wav" />
     <None Include="Hop.wav" />
     <None Include="sheet.png" />
+    <None Include="start.wav" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

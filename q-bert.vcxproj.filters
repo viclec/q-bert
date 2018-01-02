@@ -34,8 +34,39 @@
     <None Include="Hop.wav">
       <Filter>Resource Files</Filter>
     </None>
+<<<<<<< HEAD
     <None Include="sheet.png">
       <Filter>Resource Files</Filter>
     </None>
+=======
+    <None Include="pirulen.ttf" />
+    <None Include="sheet.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="coilyfall.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="curse.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bonk.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="byby.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="coilybites.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="disk.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="extra.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="start.wav">
+      <Filter>Resource Files</Filter>
+    </None>
+>>>>>>> 99e619b8fd2882ba06ff6f918919a092e3983527
   </ItemGroup>
 </Project>
