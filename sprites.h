@@ -507,7 +507,7 @@ public:
 	bool getFallingStatus(){return falling_out_of_bounds;}
 	bool getAnimationStatus(){ return animate; }
 	void setAnimationStatus(bool state){ animate = state; }
-	unsigned getlives(){return lives;}
+	int getlives(){return lives;}
 	unsigned getdraw(){return draw;}
 	unsigned get_losing_sprite(){
 		return losingsprite;
