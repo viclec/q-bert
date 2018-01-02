@@ -5,7 +5,8 @@
 #include <allegro5\allegro_audio.h>
 #include <allegro5\allegro_acodec.h>
 #include <string>
-int movesnake=0;
+
+int play = 1 ;
 
 class Sprites{
 protected:
@@ -41,7 +42,7 @@ protected:
 	int directionY;
 	unsigned positionX;
 	unsigned positionY;
-	
+	unsigned losingsprite;
 	int animationDirection;
 	bool animate;
 	bool move_to_right_disk;
@@ -49,6 +50,8 @@ protected:
 	bool enemyMove;
 	int lives;
 	bool disable;
+	unsigned collision;
+	
 public:
 	
 	Sprites(
@@ -65,7 +68,7 @@ public:
 		assert(sHeight != 0);
 
 		
-	
+	    losingsprite = 0;
 		image = im;
 		index = ind;
 		spriteWidth = sWidth;
@@ -90,9 +93,11 @@ public:
 		animationDirection = animationDir;
 		animate = false;
 		enemyMove = true;
-		lives = 3;
+		lives = 29;
 		draw=1;
 		disable = 0;
+		collision = 0;
+		
 	}	
 	
 	void setpositionX(unsigned i){
@@ -112,12 +117,16 @@ public:
 			index = init;
 			spriteWidth = x;
 			spriteHeight = y;
+			collision=1;
+			play=0;
+
 	}
 
 	void reset_Curse(){
 			index = 0;
 			spriteWidth = 36;
 			spriteHeight = 48;
+			
 	}
 
 
@@ -128,6 +137,10 @@ public:
 	void zerolives(){
 		lives=0;
 	}
+	void reducelives(){
+	 lives--;
+	}
+
 	void qbert_set_index(unsigned i){
 		index = i;
 	}
@@ -135,12 +148,28 @@ public:
 	void setdraw(int i){
 		draw = i;
 	}
+
+	void setdelay(int i){
+		frameDelay = i;
+	}
 	void lose_live(){
-	 lives--;
+	 lives=lives-9;
 	}
 	void Draw()
-	{
+	{   
 		al_draw_bitmap_region(image, currFrame*spriteWidth, index, spriteWidth, spriteHeight ,positionX, positionY, 0);
+		
+	}
+
+	void qbert_set_collision(unsigned i){
+		 collision = i;
+	}
+	unsigned get_index(){
+		return index;
+	}
+
+	unsigned qbert_get_collision(){
+		return collision ;
 	}
 
 	void moveUpRight()
@@ -189,6 +218,21 @@ public:
 		if(positionX < 0)
 			positionX = 0;
 	}
+	void diskmoveUp(){
+		positionY=positionY-2;
+		Draw();	
+	}
+
+	void diskmoveRight(){
+		positionX=positionX+2;
+		Draw();	
+	}
+
+	void diskmoveLeft(){
+		positionX=positionX-2;
+		Draw();	
+	}
+
 	void moveUp(int interval)
 	{
 		positionY -= (interval * velocityX);
@@ -212,6 +256,7 @@ public:
 		if(positionY > 355){
 			positionY = 165;
 			positionX = 304;
+			setIndex(213);
 			lives=0;
 		}
 	}
@@ -223,7 +268,7 @@ public:
 	}
 
 	void animationUpdate()
-	{
+	{		
 			if(++frameCount >= frameDelay)
 			{
 				currFrame += animationDirection;
@@ -248,11 +293,9 @@ public:
 			{	
 				//moveUp(20);
 			}else if(currFrame == 2)
-			{   if(movesnake==1){
-				 std::cout<<"move\n";
+			{   
 				 chaseQbert(qbert);
-				 movesnake=0;
-				}
+			
 			}
 					
 			if(currFrame >= maxFrame)
@@ -337,12 +380,12 @@ public:
 			if(rand() % 2 == 0)
 			{
 				moveUp(26);
-		    moveLeft(16);  
+		        moveLeft(16);  
 			}
 			else
 			{
 				moveUp(26);
-		    moveRight(16); 	
+		        moveRight(16); 	
 			}
 		}
 		else if(qbert.getPositionX() == positionX && qbert.getPositionY() > positionY)
@@ -375,12 +418,12 @@ public:
 	}
 	void playerAnimationUpdate(unsigned i)
 	{	
-
-		if(index == 302){
-		  reset_Curse();
+		if(collision == 1 ){
+		  losingsprite ++;
 		}
 		
 		if(falling_out_of_bounds==true){
+			
 			moveDown(5);
 		}
 		
@@ -391,7 +434,7 @@ public:
 				currFrame += animationDirection;
 				
 				if(currFrame >= maxFrame)
-				{   
+				{  
 				    if(i == 0){
 						moveUpRight();
 					}
@@ -419,7 +462,18 @@ public:
 			if(frameCount == 0 && currFrame == 0){
 				animate = false;
 			}
+			
 		}
+		
+		if(collision == 1 && losingsprite > 60){
+			
+		    reset_Curse();
+		    collision=0;
+		    play = 1;
+			losingsprite = 0;
+		}
+
+
 	}
 	bool qbertcollision(Sprites enemy)
 	{
@@ -429,9 +483,10 @@ public:
 			positionY - frameHeight < enemy.positionY + enemy.frameHeight)
 		{	
 
-			set_Curse(302 , 96 ,78 );
+			set_Curse(631 , 36 ,48 );
+	    
 	
-			std::cout << "collision\n";
+//std::cout << "collision\n";
 			
 			return true;
 		}
@@ -449,6 +504,9 @@ public:
 	bool getAnimationStatus(){ return animate; }
 	unsigned getlives(){return lives;}
 	unsigned getdraw(){return draw;}
+	unsigned get_losing_sprite(){
+		return losingsprite;
+	}
 	void toString()
 	{
 		std::cout << "\n\n index:" << index << "\n width: " << spriteWidth << "\n height: " << spriteHeight <<

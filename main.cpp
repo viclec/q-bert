@@ -5,7 +5,8 @@
 #include <allegro5\allegro_native_dialog.h>
 #include <vector>
 #include <cmath>
-
+#include <Windows.h>
+#include <time.h>
 const int WIDTH = 800;
 const int HEIGHT = 640;
 
@@ -13,7 +14,7 @@ unsigned long points = 0;
 unsigned remainingDisks = 2;
 
 ALLEGRO_BITMAP* bitmap = NULL;
-
+int y=0;
 int qbertfall = 0;
 int rightdisklives = 1;
 int leftdisklives = 1;
@@ -51,6 +52,14 @@ double iso_cube_y (double row){
 	return WIDTH/4 + (row-1)*h3;
 }
 
+
+void wait ( int seconds )
+{
+  clock_t endwait;
+  endwait = clock () + seconds * CLOCKS_PER_SEC ;
+  while (clock() < endwait) {}
+}
+
 bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
 {	
 	//########################
@@ -62,6 +71,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	
 	bool flag = true;
 	
+    int a=100;	
 	while(counter < p.size())
 	{	
 		if(q_x == p[counter].x && q_y == p[counter].y)
@@ -83,10 +93,10 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 		//std::cout << "kerdises wow\n";
 		done = true;
 	}
-	if( qbert.getAnimationStatus() == false && flag == true)
+	if( qbert.getAnimationStatus() == false && flag == true )
 	{	
-		if(q_y != diskLeft.getPositionY())
-		{
+		if(q_y != diskLeft.getPositionY() && q_y != diskRight.getPositionY())
+		{    
 			qbertfall=1;
 		}
 		else if(q_y == diskLeft.getPositionY() && q_x == diskLeft.getPositionX())
@@ -94,17 +104,15 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 				
 				if(diskLeft.getlives()!=0){
 					remainingDisks--;
-					qbert.setpositionX(304) ;
-					qbert.setpositionY(145) ;
 					diskLeft.zerolives();
-					diskLeft.setdraw(0);
+				    diskLeft.setdraw(0);
 					qbertfall=0; 
 				}else{
 					qbertfall=1; 
 				}
 				
 
-			gototorightdisk=1; 
+			//gototorightdisk=1; 
 			
 		}
 		else if(q_y == diskRight.getPositionY() && q_x == diskRight.getPositionX())
@@ -112,8 +120,6 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 
 			if(diskRight.getlives()!=0){
 					remainingDisks--;
-					qbert.setpositionX(304) ;
-					qbert.setpositionY(145) ;
 					diskRight.zerolives();
 					diskRight.setdraw(0);
 					qbertfall=0; 
@@ -123,7 +129,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 
 
 
-			gototorightdisk=1; 
+			//gototorightdisk=1; 
 			
 		}
 		
@@ -248,10 +254,46 @@ int main()
 	Sprites qbert(bitmap, 
 		spriteHeightInBitmap[QBERT], qbertX, qbertY,
 		8, 8,
-		qbertFrames, 5,
+		qbertFrames,5,
 		1, 10, 1, 0, 
 		1, 304, 145);
 	
+	Sprites PLAYERLOGO(bitmap, 
+		605, 75, 25,
+		8, 8,
+		qbertFrames,5,
+		1, 10, 1, 0, 
+		1, 150, 155);
+
+	Sprites CURSE_CLOUD(bitmap, 
+		380, 130, 50,
+		8, 8,
+		qbertFrames,5,
+		1, 10, 1, 0, 
+		1, 150, 155);
+
+
+	Sprites qbertlive1(bitmap, 
+		270, 17, 25,
+		8, 8,
+		qbertFrames,5,
+		1, 10, 1, 0, 
+		1, 150, 175);
+
+	Sprites qbertlive2(bitmap, 
+		270, 17, 25,
+		8, 8,
+		qbertFrames,5,
+		1, 10, 1, 0, 
+		1, 170, 175);
+
+	Sprites qbertlive3(bitmap, 
+		270, 17, 25,
+		8, 8,
+		qbertFrames,5,
+		1, 10, 1, 0, 
+		1, 190, 175);
+
 	Sprites snake(bitmap,
 		spriteHeightInBitmap[SNAKE], 30, 50,
 		8, 8,
@@ -286,7 +328,7 @@ int main()
 		,4,20
 		,38,0,1,0
 		,1,224,259);
-
+	int a=0;
 	//==============================================
 	// TIMER INIT AND STARTUP
 	//==============================================
@@ -299,10 +341,11 @@ int main()
 	al_start_timer(timer);
 
 	while(!done)
-	{
+	{    
+		
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
-
+		
 		//==============================================
 		// INPUT
 		//==============================================
@@ -379,36 +422,81 @@ int main()
 			if(!first_run)
 			{
 				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes);
+				
 				if(qbertfall==1){
-					al_play_sample(fall, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
+					al_play_sample(fall, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);	
+					if (qbert.getPositionY() > 350){
+						qbert.lose_live();
+		
+					 if(qbert.getlives()==20){
+						 qbertlive3.setIndex(10000);
+					 }
+					 if(qbert.getlives()==10){
+						 qbertlive2.setIndex(10000);
+					 }
+					 if(qbert.getlives()==0){
+						 qbertlive1.setIndex(10000);
+					 }
+						std::cout<<"lives"<<qbert.getlives()<<"\n";
+			        }
 					qbert.set_Fall(true);
 					qbertfall=0;
 				}
 				
 				
 			}
+			
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
 			{   
-				ball.animationMove();
+				if(qbert.qbert_get_collision() == 0){
+					ball.animationMove();
+				}else if(play == 0 &&  qbert.get_losing_sprite()>50){
+					 
+					 
+			//		std::cout<<"qbert lives:"<<a<<"\n";
+				//	a--;
+					 if(qbert.getlives()==20){
+						 qbertlive3.setIndex(10000);
+					 }
+					 if(qbert.getlives()==10){
+						 qbertlive2.setIndex(10000);
+					 }
+					 if(qbert.getlives()==0){
+						 qbertlive1.setIndex(10000);
+					 }
+					 ball.setIndex(10000);
+					 ball.setpositionX(500);
+					 ball.setpositionY(260);
+					 qbert.reducelives();
+					
+				}
+
 			}
 		//	std::cout<<"qbert: "<<qbert.getPositionY()<<"   "<<qbert.getPositionX()<<"\n";
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
-			{  
+			{   
 				if(egg.getPositionY() < 311)
 				{
 					egg.animationMove();
-					qbert.qbertcollision(egg);
+				//	qbert.qbertcollision(egg);
 					snake.setpositionX(egg.getPositionX());
 					snake.setpositionY(egg.getPositionY()-20);
 			//		std::cout<<"snake: "<<snake.getPositionY()<<" "<<snake.getPositionX() <<"\n";
 
 				}
 				else
-				{
-					snake.animationSnake(qbert);
-					if(qbert.qbertcollision(snake)){
-						std::cout << "SNAKE";	
+				{   
+					if(qbert.qbert_get_collision() == 0){
+			    		snake.animationSnake(qbert);
+						if(qbert.qbertcollision(snake)){
+						//  std::cout << "SNAKE";	
+						}
 					}
+					else if(play == 0 && qbert.get_losing_sprite()>50){
+					  egg.setpositionX(304);
+					  egg.setpositionY(165);
+					  
+					}	
 				}
 			}
 
@@ -427,42 +515,114 @@ int main()
 		if(render && al_is_event_queue_empty(event_queue))
 		{
 			render = false;
-
+			qbertlive1.Draw();
+			qbertlive2.Draw();
+			qbertlive3.Draw();
+			PLAYERLOGO.Draw();
 			qbert.Draw();
 			Compute_iso_cube_placement(number_of_rows,3, pyramid_boxes, first_run);
 			
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -1)
-			{  
-				 ball.Draw();
-				
+			{		
+				 if(qbert.qbert_get_collision() == 0){
+					ball.Draw();
+				 }
 			}			
 			if(blocksLeft < ((number_of_rows * (number_of_rows + 1) ) / 2) -3)
 			{  
 				if(egg.getPositionY() < 311)
 				{
-					egg.Draw();
+					  egg.Draw();
 				}
 				else
-				{
-					snake.Draw();
+				{   
+					if(qbert.qbert_get_collision() == 0){
+					  snake.Draw();
+					}
+
 				}
 				 
 			}
 			if(diskright.getdraw()==1){
 				diskright.Draw();
 			}
+
+			if(diskleft.getdraw()==0){
+				if(qbert.getPositionX()!=304 && qbert.getPositionY()!=144){
+					qbert.set_Fall(false);
+				}else{
+					diskleft.setdraw(2);
+					qbert.setpositionX(304);
+					qbert.setpositionY(145);
+
+					qbert.Draw();
+					qbert.set_Fall(false);
+				}
+				
+				if(diskleft.getPositionY()>175){	
+					 diskleft.diskmoveUp();
+					 qbert.diskmoveUp();
+				     diskleft.Draw();
+					
+					 qbert.Draw();
+				}else{
+					if(diskleft.getPositionX()<304){
+					 diskleft.diskmoveRight();
+					 qbert.diskmoveRight();
+					 diskleft.Draw();
+					 qbert.Draw();
+					}
+				}
+
+				//diskleft.Draw();
+			}
 			if(diskleft.getdraw()==1){
 				diskleft.Draw();
 			}
 
-			if(qbert.getFallingStatus()!=1){
-				movesnake=1;
-				qbert.Draw();
-			
+			if(diskright.getdraw()==0){
+				if(qbert.getPositionX()!=304 && qbert.getPositionY()!=144){
+					qbert.set_Fall(false);
+				}else{
+					diskright.setdraw(2);
+					qbert.setpositionX(304);
+					qbert.setpositionY(145);
+
+					qbert.Draw();
+					qbert.set_Fall(false);
+				}
+				
+				if(diskright.getPositionY()>175){	
+					 diskright.diskmoveUp();
+					 qbert.diskmoveUp();
+				     diskright.Draw();
+					
+					 qbert.Draw();
+				}else{
+					if(diskright.getPositionX()>304){
+					 diskright.diskmoveLeft();
+					 qbert.diskmoveLeft();
+					 diskright.Draw();
+					 qbert.Draw();
+					}
+				}
 			}
 
+			if(qbert.getFallingStatus()!=1){
+				
+						
+				qbert.Draw();
+				if(qbert.qbert_get_collision()==1){
+			    CURSE_CLOUD.setpositionX(qbert.getPositionX()-15); 
+				CURSE_CLOUD.setpositionY(qbert.getPositionY()-35); 
+				CURSE_CLOUD.Draw();
+				}
+			}
+			
 			if(key_pushed != 666){
+			 
 				qbert.playerAnimationUpdate(key_pushed);
+			  
 			}
 			
 			al_flip_display();
