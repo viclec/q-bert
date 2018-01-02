@@ -13,6 +13,8 @@ const int HEIGHT = 640;
 unsigned long points = 0;
 unsigned long rounds = 0;
 unsigned remainingDisks = 2;
+unsigned number_of_rows= 7;
+const unsigned blocksInitial = (number_of_rows * (number_of_rows + 1) ) / 2;
 
 ALLEGRO_BITMAP* bitmap = NULL;
 int y=0;
@@ -86,7 +88,40 @@ void clearMonsters(){
 
 }
 
-bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
+void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyramid, bool &first_run){
+	double i;
+	double j;
+	int index = 0;
+	struct pyramid p;
+	for(i=0; i<row; i++){
+
+		double y = iso_cube_y(i);
+		double ys = y;
+		double xs = HEIGHT/2 - i/2*cubeSizeX;
+		
+		for(j=0; j<=i; j++){
+			double x = xs + (j-1)*cubeSizeX;
+			double xc = x + cubeSizeX/2;
+			double yc = y + h1;
+
+			if(first_run){
+				p.x = xc;
+				p.y = yc;
+				p.multiplier = 1;
+				pyramid.push_back(p);
+			}
+			al_draw_bitmap_region(bitmap, pyramid[index].multiplier * cubeX , cubeY, cubeSizeX, cubeSizeY, xc, yc , 0);	
+		//	if(i==2){std::cout<<yc;}
+
+
+			index++;
+		}
+	}	
+	
+	first_run = false;
+}
+
+bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p, bool first_run)
 {	
 	//########################
 	// bound width, height
@@ -116,8 +151,14 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	if(blocksLeft == 0){
 		points += 50 * remainingDisks;	//remaining disks bonus
 		points += 1000;	//completing screen
+		
+		/*first_run = true;
+		blocksLeft = blocksInitial;
+		rounds++;
+		Compute_iso_cube_placement(7, 7, p, first_run);
+		return false;*/
 		//std::cout << "kerdises wow\n";
-		done = true;
+		//done = true;
 	}
 	if( qbert.getAnimationStatus() == false && onAir == true )
 	{	
@@ -164,39 +205,6 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	 return false;	
 }
 
-void Compute_iso_cube_placement(double row,double col, std::vector<pyramid> &pyramid, bool &first_run){
-	double i;
-	double j;
-	int index = 0;
-	struct pyramid p;
-	for(i=0; i<row; i++){
-
-		double y = iso_cube_y(i);
-		double ys = y;
-		double xs = HEIGHT/2 - i/2*cubeSizeX;
-		
-		for(j=0; j<=i; j++){
-			double x = xs + (j-1)*cubeSizeX;
-			double xc = x + cubeSizeX/2;
-			double yc = y + h1;
-
-			if(first_run){
-				p.x = xc;
-				p.y = yc;
-				p.multiplier = 1;
-				pyramid.push_back(p);
-			}
-			al_draw_bitmap_region(bitmap, pyramid[index].multiplier * cubeX , cubeY, cubeSizeX, cubeSizeY, xc, yc , 0);	
-		//	if(i==2){std::cout<<yc;}
-
-
-			index++;
-		}
-	}	
-	
-	first_run = false;
-}
-
 int main()
 {	//==============================================
 	// PROJECT VARIABLES
@@ -209,8 +217,7 @@ int main()
 	unsigned key_pushed = 666;
 	const unsigned spriteHeightInBitmap[] = {0, 50, 115, 150, 178, 213, 432, 482 ,532 ,302};
 	
-	unsigned number_of_rows= 7;
-	unsigned blocksLeft = (number_of_rows * (number_of_rows + 1) ) / 2;
+	unsigned blocksLeft = blocksInitial;
 
 	const unsigned qbertY = 50;
 	const unsigned qbertX = 37;
@@ -330,21 +337,21 @@ int main()
 	Sprites snake(bitmap,
 		spriteHeightInBitmap[SNAKE], 30, 50,
 		8, 8,
-		snakeFrames, 15,
+		snakeFrames, 25,
 		1, 10, 1, 0,
 		1, 304, 145);
 
 	Sprites ball(bitmap, 
 		spriteHeightInBitmap[BALL], ballX, ballY,
 		8, 8,
-		ballFrames, 10, 
+		ballFrames, 20, 
 		1, 10, 1, 0,
 		1, 304, 165);
 
 	Sprites egg(bitmap, 
 		spriteHeightInBitmap[EGG], ballX, ballY,
 		8, 8,
-		ballFrames, 5, 
+		ballFrames, 20, 
 		1, 10, 1, 0,
 		1, 304, 165);
 
@@ -374,15 +381,15 @@ int main()
 	al_start_timer(timer);
 	ALLEGRO_EVENT ev;
 
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 100,ALLEGRO_ALIGN_CENTRE, "Victor Lecomte 3449");
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 135,ALLEGRO_ALIGN_CENTRE, "Alexis Pavlakis 34xx");
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 170,ALLEGRO_ALIGN_CENTRE, "George Zervas 3456");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 100,ALLEGRO_ALIGN_CENTRE, "Alexis Pavlakis 3422");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 135,ALLEGRO_ALIGN_CENTRE, "George Zervas 3456");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 170,ALLEGRO_ALIGN_CENTRE, "Victor Lecomte 3449");
 	al_draw_text(font, al_map_rgb(255,0,0), 400, 320,ALLEGRO_ALIGN_CENTRE, "Press ENTER to start!");
 	al_draw_text(title, al_map_rgb(255,255,255), 400, 220,ALLEGRO_ALIGN_CENTRE, "Q*bert");
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 400,ALLEGRO_ALIGN_CENTRE, "University of Crete");
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 450,ALLEGRO_ALIGN_CENTRE, "Department of Computer Science");
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 500,ALLEGRO_ALIGN_CENTRE, "University of Crete Department of Computer Science");
-	al_draw_text(credits, al_map_rgb(0,255,255), 400, 550,ALLEGRO_ALIGN_CENTRE, "CS-454. Development of Intelligent Interfaces and Games");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 480,ALLEGRO_ALIGN_CENTRE, "University of Crete");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 510,ALLEGRO_ALIGN_CENTRE, "Department of Computer Science");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 540,ALLEGRO_ALIGN_CENTRE, "University of Crete Department of Computer Science");
+	al_draw_text(credits, al_map_rgb(0,255,255), 400, 570,ALLEGRO_ALIGN_CENTRE, "CS-454. Development of Intelligent Interfaces and Games");
 	al_draw_text(credits, al_map_rgb(0,255,255), 400, 600,ALLEGRO_ALIGN_CENTRE, "Term Project, Fall Semester 2017");
 
 	al_flip_display();
@@ -401,7 +408,9 @@ int main()
 				al_destroy_display(display);						
 				al_destroy_sample(hop);						
 				al_destroy_sample(coilyHop);						
-				al_destroy_sample(fall);						
+				al_destroy_sample(coilyfall);						
+				al_destroy_sample(disk);						
+				al_destroy_sample(start);						
 
 				return 0;
 			}
@@ -488,7 +497,7 @@ int main()
 			unsigned qy = qbert.getPositionY();
 			if(!first_run)
 			{
-				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes);
+				pyramid_colision(qbert,diskleft,diskright,blocksLeft,done,pyramid_boxes, first_run);
 				
 				if(qbertfall==1){
 					if (qbert.getPositionY() > 350){
@@ -723,7 +732,10 @@ int main()
 					al_destroy_display(display);						
 					al_destroy_sample(hop);						
 					al_destroy_sample(coilyHop);						
-					al_destroy_sample(fall);						
+					al_destroy_sample(fall);							
+					al_destroy_sample(coilyfall);						
+					al_destroy_sample(disk);						
+					al_destroy_sample(start);					
 
 					return 0;
 				}

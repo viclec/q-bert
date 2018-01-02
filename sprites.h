@@ -170,9 +170,6 @@ public:
 	}
 
 	unsigned qbert_get_collision(){
-		/*if(collision){
-			animate = true;
-		}*/
 		return collision ;
 	}
 
