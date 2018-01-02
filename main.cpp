@@ -60,6 +60,12 @@ void wait ( int seconds )
   while (clock() < endwait) {}
 }
 
+void gameOver(ALLEGRO_FONT* font){
+	char buffer [33];
+	al_draw_text(font, al_map_rgb(255,255,255), 250, 200,ALLEGRO_ALIGN_CENTRE, "Game over!");
+	//return true;
+}
+
 bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
 {	
 	//########################
@@ -352,9 +358,9 @@ int main()
 		
 		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
-			al_play_sample(hop, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 			if(qbert.getAnimationStatus())
 				continue;
+			al_play_sample(hop, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 			switch(ev.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
@@ -463,6 +469,7 @@ int main()
 					 }
 					 if(qbert.getlives()==0){
 						 qbertlive1.setIndex(10000);
+						 gameOver(font);
 					 }
 					 ball.setIndex(10000);
 					 ball.setpositionX(500);
