@@ -34,6 +34,8 @@ double cubeSizeY = 38;
 double diskX = 5;
 double diskY = 150;
 
+bool done = false;
+
 struct pyramid{
 	unsigned x;
 	unsigned y;
@@ -61,9 +63,17 @@ void wait ( int seconds )
 }
 
 void gameOver(ALLEGRO_FONT* font){
+	std::stringstream ss;
 	char buffer [33];
-	al_draw_text(font, al_map_rgb(255,255,255), 250, 200,ALLEGRO_ALIGN_CENTRE, "Game over!");
-	//return true;
+	itoa (points,buffer,10);
+	ss << "Game over!" << '\n' << "Total Points: " << buffer;
+	const std::string tmp = ss.str();
+	al_draw_text(font, al_map_rgb(255,255,255), 250, 200,ALLEGRO_ALIGN_CENTRE, tmp.c_str());
+	done = true;
+}
+
+void clearMonsters(){
+
 }
 
 bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, unsigned &blocksLeft, bool &done, std::vector<pyramid> &p)
@@ -75,7 +85,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 	unsigned q_x = qbert.getPositionX();
 	unsigned q_y = qbert.getPositionY() + 36;
 	
-	bool flag = true;
+	bool onAir = true;
 	
     int a=100;	
 	while(counter < p.size())
@@ -86,7 +96,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 				blocksLeft--;
 				points += 25;	//color change
 			}
-			flag = false;
+			onAir = false;
 			p[counter].multiplier = 7;
 			break;
 		}
@@ -99,7 +109,7 @@ bool pyramid_colision(Sprites &qbert , Sprites &diskLeft, Sprites &diskRight, un
 		//std::cout << "kerdises wow\n";
 		done = true;
 	}
-	if( qbert.getAnimationStatus() == false && flag == true )
+	if( qbert.getAnimationStatus() == false && onAir == true )
 	{	
 		if(q_y != diskLeft.getPositionY() && q_y != diskRight.getPositionY())
 		{    
@@ -183,7 +193,6 @@ int main()
 	//==============================================
 	std::vector<pyramid> pyramid_boxes;
 	bool first_run = true;
-	bool done = false;
 	bool render = false;
 	const float FPS = 60.0;
 
@@ -246,6 +255,8 @@ int main()
 	ALLEGRO_SAMPLE *hop = al_load_sample("Hop.wav");
 	ALLEGRO_SAMPLE *coilyHop = al_load_sample("Ahop.wav");
 	ALLEGRO_SAMPLE *fall = al_load_sample("fall.wav");
+	ALLEGRO_SAMPLE *coilyfall = al_load_sample("coilyfall.wav");
+	ALLEGRO_SAMPLE *curse = al_load_sample("curse.wav");
 	al_reserve_samples(1);
 
 	//==============================================
@@ -345,11 +356,11 @@ int main()
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 
 	al_start_timer(timer);
+	ALLEGRO_EVENT ev;
 
 	while(!done)
 	{    
 		
-		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 		
 		//==============================================
@@ -485,7 +496,7 @@ int main()
 				if(egg.getPositionY() < 311)
 				{
 					egg.animationMove();
-				//	qbert.qbertcollision(egg);
+					qbert.qbertcollision(egg);
 					snake.setpositionX(egg.getPositionX());
 					snake.setpositionY(egg.getPositionY()-20);
 			//		std::cout<<"snake: "<<snake.getPositionY()<<" "<<snake.getPositionX() <<"\n";
@@ -620,9 +631,12 @@ int main()
 						
 				qbert.Draw();
 				if(qbert.qbert_get_collision()==1){
+					qbert.setAnimationStatus(true);
+				clearMonsters();
 			    CURSE_CLOUD.setpositionX(qbert.getPositionX()-15); 
 				CURSE_CLOUD.setpositionY(qbert.getPositionY()-35); 
 				CURSE_CLOUD.Draw();
+				al_play_sample(curse, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, 0);
 				}
 			}
 			
@@ -640,15 +654,24 @@ int main()
 		}
 	}
 	//==============================================
-	// DESTROY ALLEGRO OBJECTS
+	// WAIT TO EXIT AND DESTROY ALLEGRO OBJECTS
 	//==============================================
-	al_destroy_bitmap(bitmap);
-	al_destroy_timer(timer);
-	al_destroy_event_queue(event_queue);
-	al_destroy_display(display);						
-	al_destroy_sample(hop);						
-	al_destroy_sample(coilyHop);						
-	al_destroy_sample(fall);						
+	while(true){    
+		
+		al_wait_for_event(event_queue, &ev);
+		if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
+			{
+				if(ev.keyboard.keycode = ALLEGRO_KEY_ESCAPE){
+					al_destroy_bitmap(bitmap);
+					al_destroy_timer(timer);
+					al_destroy_event_queue(event_queue);
+					al_destroy_display(display);						
+					al_destroy_sample(hop);						
+					al_destroy_sample(coilyHop);						
+					al_destroy_sample(fall);						
 
-	return 0;
+					return 0;
+				}
+			}
+	}
 }

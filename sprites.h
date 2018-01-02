@@ -5,6 +5,7 @@
 #include <allegro5\allegro_audio.h>
 #include <allegro5\allegro_acodec.h>
 #include <string>
+#include <sstream>
 
 int play = 1 ;
 
@@ -169,6 +170,9 @@ public:
 	}
 
 	unsigned qbert_get_collision(){
+		/*if(collision){
+			animate = true;
+		}*/
 		return collision ;
 	}
 
@@ -502,6 +506,7 @@ public:
 	unsigned getFrameHeight(){ return frameHeight; }
 	bool getFallingStatus(){return falling_out_of_bounds;}
 	bool getAnimationStatus(){ return animate; }
+	void setAnimationStatus(bool state){ animate = state; }
 	unsigned getlives(){return lives;}
 	unsigned getdraw(){return draw;}
 	unsigned get_losing_sprite(){
